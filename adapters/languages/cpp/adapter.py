@@ -26,24 +26,25 @@ from adapters.languages.cpp.transformer.transformer import CppTraceTransformer
 
 
 # Shell script written into the sandbox workspace.
-# Detects whichever compiler is available (clang++ preferred, g++ fallback).
-_BUILD_AND_RUN_SCRIPT = """\
-#!/usr/bin/env bash
-set -e
-
-if command -v clang++ &>/dev/null; then
-    COMPILER="clang++"
-elif command -v g++ &>/dev/null; then
-    COMPILER="g++"
-else
-    echo "No C++ compiler found (clang++ or g++)" >&2
-    exit 1
-fi
-
-"$COMPILER" -std=c++20 -O0 -o program instrumented.cpp 2>&1 >&2
-
-./program
-"""
+# IMPORTANT: line endings must be LF (\n) only.
+# The script runs inside a Linux container — CRLF will cause bash errors.
+_BUILD_AND_RUN_SCRIPT = (
+    "#!/usr/bin/env bash\n"
+    "set -e\n"
+    "\n"
+    "if command -v g++ &>/dev/null; then\n"
+    "    COMPILER=\"g++\"\n"
+    "elif command -v clang++ &>/dev/null; then\n"
+    "    COMPILER=\"clang++\"\n"
+    "else\n"
+    "    echo \"No C++ compiler found (g++ or clang++)\" >&2\n"
+    "    exit 1\n"
+    "fi\n"
+    "\n"
+    "\"$COMPILER\" -std=c++20 -O0 -o program instrumented.cpp\n"
+    "\n"
+    "./program\n"
+)
 
 
 class CppLanguageAdapter:
@@ -75,7 +76,7 @@ class CppLanguageAdapter:
 
         Writes two files into the workspace:
           instrumented.cpp  — the trace-emitting source
-          build_and_run.sh  — compile + execute script
+          build_and_run.sh  — compile and execute script (LF line endings)
         """
         instrumented = self._instrumentor.instrument(request.source_code)
 
@@ -91,7 +92,7 @@ class CppLanguageAdapter:
                 ),
             ],
             command=["bash", "build_and_run.sh"],
-            timeout_ms=15_000,
+            timeout_ms=30_000,
             memory_limit_mb=128,
             network_enabled=False,
             adapter_context={

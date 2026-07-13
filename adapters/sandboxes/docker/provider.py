@@ -27,7 +27,6 @@ class DockerSandboxProvider:
       - memory limits
       - CPU limits
       - execution timeout
-      - read-only root filesystem with tmpfs for /tmp
     """
 
     DEFAULT_IMAGE = "gcc:13"
@@ -42,11 +41,14 @@ class DockerSandboxProvider:
         with tempfile.TemporaryDirectory(prefix="prism_docker_") as workspace:
             workspace_path = Path(workspace)
 
-            # Write workload files into the temp workspace
+            # Write workload files with LF line endings.
+            # Files originate on Windows but execute inside a Linux container.
             for file in workload.files:
                 dest = workspace_path / file.path
                 dest.parent.mkdir(parents=True, exist_ok=True)
-                dest.write_text(file.content, encoding="utf-8")
+                # Normalise to LF regardless of host OS
+                content_lf = file.content.replace("\r\n", "\n").replace("\r", "\n")
+                dest.write_bytes(content_lf.encode("utf-8"))
 
             timeout_sec = workload.timeout_ms / 1000.0
             start = time.monotonic()
@@ -62,12 +64,12 @@ class DockerSandboxProvider:
                     cmd,
                     capture_output=True,
                     text=True,
-                    timeout=timeout_sec + 10,  # extra buffer for Docker overhead
+                    timeout=timeout_sec + 10,
                 )
                 duration_ms = int((time.monotonic() - start) * 1000)
 
                 timed_out = (
-                    proc.returncode == 137  # SIGKILL from Docker
+                    proc.returncode == 137
                     or duration_ms > workload.timeout_ms + 5_000
                 )
 
