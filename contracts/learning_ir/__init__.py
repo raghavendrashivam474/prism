@@ -1,5 +1,22 @@
-"""Learning IR contracts — placeholder for Milestone 0.2 import resolution."""
+"""
+Learning IR v0.1 — PRISM internal language-neutral execution representation.
 
-from contracts.learning_ir.models import LearningTrace, LearningEvent
+Every language adapter produces LearningTrace.
+No language-specific concepts exist beyond this boundary.
+"""
 
-__all__ = ["LearningTrace", "LearningEvent"]
+from contracts.learning_ir.models import (
+    IR_VERSION,
+    EventType,
+    LearningEvent,
+    LearningTrace,
+    SourceLocation,
+)
+
+__all__ = [
+    "IR_VERSION",
+    "EventType",
+    "LearningEvent",
+    "LearningTrace",
+    "SourceLocation",
+]
