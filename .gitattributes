@@ -1,0 +1,16 @@
+# Normalise all text files to LF in the repository
+* text=auto eol=lf
+
+# Explicitly mark these as text
+*.py text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.sh text eol=lf
+*.cpp text eol=lf
+*.gitattributes text eol=lf
+
+# Binary files — do not touch line endings
+*.whl binary
+*.png binary
+*.jpg binary
