@@ -1,0 +1,101 @@
+{
+  "irVersion": "0.1",
+  "execution_id": "d4e8b549-a682-4bb1-99a2-75c90c52e608",
+  "language_id": "cpp",
+  "events": [
+    {
+      "irVersion": "0.1",
+      "sequence": 1,
+      "type": "execution.started",
+      "source": {
+        "line": 1
+      },
+      "entityId": null,
+      "payload": {}
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 2,
+      "type": "scope.entered",
+      "source": {
+        "line": 1
+      },
+      "entityId": null,
+      "payload": {
+        "scopeId": "scope_main_1",
+        "displayName": "main"
+      }
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 3,
+      "type": "entity.created",
+      "source": {
+        "line": 2
+      },
+      "entityId": "var_a_1",
+      "payload": {
+        "kind": "variable",
+        "displayName": "a",
+        "dataType": "int",
+        "value": 1,
+        "scopeId": "scope_main_1"
+      }
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 4,
+      "type": "entity.created",
+      "source": {
+        "line": 3
+      },
+      "entityId": "var_b_1",
+      "payload": {
+        "kind": "variable",
+        "displayName": "b",
+        "dataType": "int",
+        "value": 2,
+        "scopeId": "scope_main_1"
+      }
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 5,
+      "type": "entity.created",
+      "source": {
+        "line": 4
+      },
+      "entityId": "var_c_1",
+      "payload": {
+        "kind": "variable",
+        "displayName": "c",
+        "dataType": "int",
+        "value": 3,
+        "scopeId": "scope_main_1"
+      }
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 6,
+      "type": "scope.exited",
+      "source": {
+        "line": 6
+      },
+      "entityId": null,
+      "payload": {
+        "scopeId": "scope_main_1",
+        "displayName": "main"
+      }
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 7,
+      "type": "execution.completed",
+      "source": {
+        "line": 6
+      },
+      "entityId": null,
+      "payload": {}
+    }
+  ]
+}

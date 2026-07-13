@@ -1,0 +1,95 @@
+{
+  "irVersion": "0.1",
+  "execution_id": "08f9033d-caff-4afd-ae95-69ab0ae3b81c",
+  "language_id": "cpp",
+  "events": [
+    {
+      "irVersion": "0.1",
+      "sequence": 1,
+      "type": "execution.started",
+      "source": {
+        "line": 1
+      },
+      "entityId": null,
+      "payload": {}
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 2,
+      "type": "scope.entered",
+      "source": {
+        "line": 1
+      },
+      "entityId": null,
+      "payload": {
+        "scopeId": "scope_main_1",
+        "displayName": "main"
+      }
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 3,
+      "type": "entity.created",
+      "source": {
+        "line": 2
+      },
+      "entityId": "var_x_1",
+      "payload": {
+        "kind": "variable",
+        "displayName": "x",
+        "dataType": "int",
+        "value": 10,
+        "scopeId": "scope_main_1"
+      }
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 4,
+      "type": "entity.value_changed",
+      "source": {
+        "line": 3
+      },
+      "entityId": "var_x_1",
+      "payload": {
+        "previousValue": 10,
+        "value": 20
+      }
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 5,
+      "type": "entity.value_changed",
+      "source": {
+        "line": 4
+      },
+      "entityId": "var_x_1",
+      "payload": {
+        "previousValue": 20,
+        "value": 25
+      }
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 6,
+      "type": "scope.exited",
+      "source": {
+        "line": 6
+      },
+      "entityId": null,
+      "payload": {
+        "scopeId": "scope_main_1",
+        "displayName": "main"
+      }
+    },
+    {
+      "irVersion": "0.1",
+      "sequence": 7,
+      "type": "execution.completed",
+      "source": {
+        "line": 6
+      },
+      "entityId": null,
+      "payload": {}
+    }
+  ]
+}
