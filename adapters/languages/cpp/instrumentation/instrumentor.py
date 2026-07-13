@@ -11,7 +11,7 @@ It must not be imported by PRISM Core or other adapters.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 # ---------------------------------------------------------------------------
@@ -28,37 +28,34 @@ class RawCppEvent:
     It must never escape into PRISM Core or Learning IR.
     """
     seq: int
-    kind: str           # exec_start | scope_enter | var_init | var_write | scope_exit | exec_end
+    kind: str
     name: str | None
     cpp_type: str | None
     value: int | None
     line: int
     scope_name: str | None = None
-    runtime_id: str | None = None   # e.g. "x#1"
+    runtime_id: str | None = None
 
 
 # ---------------------------------------------------------------------------
-# Patterns for line classification
+# Patterns
 # ---------------------------------------------------------------------------
 
-# int x = expr;   (variable declaration with initialiser)
+# int x = expr;
 _VAR_DECL = re.compile(r"^(\s*)int\s+(\w+)\s*=\s*(.+?)\s*;\s*$")
 
-# x = expr;   (assignment, not declaration — name must already be declared)
+# x = expr;
 _VAR_ASSIGN = re.compile(r"^(\s*)(\w+)\s*=\s*(.+?)\s*;\s*$")
 
 # int main() {
 _MAIN_OPEN = re.compile(r"^\s*int\s+main\s*\(\s*\)\s*\{\s*$")
 
-# return N;
-_RETURN_STMT = re.compile(r"^\s*return\s+\d+\s*;\s*$")
-
-# A lone closing brace
-_CLOSE_BRACE = re.compile(r"^\s*\}\s*$")
+# return <integer>;
+_RETURN_STMT = re.compile(r"^(\s*)return\s+(\d+)\s*;\s*$")
 
 
 # ---------------------------------------------------------------------------
-# Runtime header injected at the top of every instrumented file
+# Runtime header
 # ---------------------------------------------------------------------------
 
 _RUNTIME_HEADER = """\
@@ -81,23 +78,19 @@ class CppSourceInstrumentor:
     """
     Transforms a supported C++ source file into a trace-emitting equivalent.
 
-    The instrumented source:
-      - emits exec_start after main() opens
-      - emits scope_enter after main() opens
-      - emits var_init after each int variable declaration
-      - emits var_write after each variable assignment
-      - emits scope_exit before main() closes
-      - emits exec_end before main() closes
+    Strategy:
+      - exec_start and scope_enter are emitted immediately after main() opens.
+      - var_init is emitted after each int variable declaration.
+      - var_write is emitted after each variable assignment.
+      - scope_exit and exec_end are emitted BEFORE the return statement
+        in main(). This is correct because return is the exit point and
+        the closing brace is unreachable after return.
 
-    Variable runtime IDs use the format "name#counter" (e.g. "x#1").
+    The Sprint 0 profile requires normal completion via return 0, so
+    intercepting return is reliable for all supported fixtures.
     """
 
     def instrument(self, source: str) -> str:
-        """
-        Instrument the source and return the modified source string.
-
-        The caller writes this to a file and compiles it inside the sandbox.
-        """
         lines = source.splitlines()
         output: list[str] = [_RUNTIME_HEADER]
 
@@ -107,21 +100,14 @@ class CppSourceInstrumentor:
             seq[0] += 1
             return seq[0]
 
-        # Track declared variables so we can assign runtime IDs
-        declared: dict[str, int] = {}   # name -> counter
+        declared: dict[str, int] = {}
 
         def runtime_id(name: str) -> str:
-            if name not in declared:
-                declared[name] = 1
+            declared.setdefault(name, 1)
             return f"{name}#{declared[name]}"
 
-        def emit_line(kind: str, extra_fields: str, indent: str = "    ") -> str:
-            """Build a prism_emit(...) statement."""
-            s = next_seq()
-            return f'{indent}prism_emit("{{\\"seq\\":{s},\\"kind\\":\\"{kind}\\"{extra_fields}}}");'
-
         in_main = False
-        brace_depth = 0
+        scope_closed = [False]  # track whether we have already emitted scope_exit
 
         for line_num, line in enumerate(lines, start=1):
             stripped = line.rstrip()
@@ -129,18 +115,16 @@ class CppSourceInstrumentor:
             # ----------------------------------------------------------------
             # Detect int main() {
             # ----------------------------------------------------------------
-            if _MAIN_OPEN.match(stripped):
+            if not in_main and _MAIN_OPEN.match(stripped):
                 output.append(stripped)
                 in_main = True
-                brace_depth = 1
+                scope_closed[0] = False
 
-                # exec_start
                 s = next_seq()
                 output.append(
                     f'    prism_emit("{{\\"seq\\":{s},\\"kind\\":\\"exec_start\\",'
                     f'\\"line\\":{line_num}}}");'
                 )
-                # scope_enter
                 s = next_seq()
                 output.append(
                     f'    prism_emit("{{\\"seq\\":{s},\\"kind\\":\\"scope_enter\\",'
@@ -148,46 +132,40 @@ class CppSourceInstrumentor:
                 )
                 continue
 
+            # Lines before main — pass through unchanged
             if not in_main:
                 output.append(stripped)
                 continue
 
             # ----------------------------------------------------------------
-            # Inside main() — track brace depth
+            # Detect return statement inside main — emit scope/exec END first
             # ----------------------------------------------------------------
-            opens = stripped.count("{")
-            closes = stripped.count("}")
-            brace_depth += opens - closes
+            return_match = _RETURN_STMT.match(stripped)
+            if return_match and not scope_closed[0]:
+                indent = return_match.group(1) or "    "
+                scope_closed[0] = True
 
-            # ----------------------------------------------------------------
-            # Detect closing brace of main()
-            # ----------------------------------------------------------------
-            if brace_depth <= 0 and _CLOSE_BRACE.match(stripped):
-                # scope_exit
                 s = next_seq()
                 output.append(
-                    f'    prism_emit("{{\\"seq\\":{s},\\"kind\\":\\"scope_exit\\",'
+                    f'{indent}prism_emit("{{\\"seq\\":{s},\\"kind\\":\\"scope_exit\\",'
                     f'\\"scope_name\\":\\"main\\",\\"line\\":{line_num}}}");'
                 )
-                # exec_end
                 s = next_seq()
                 output.append(
-                    f'    prism_emit("{{\\"seq\\":{s},\\"kind\\":\\"exec_end\\",'
+                    f'{indent}prism_emit("{{\\"seq\\":{s},\\"kind\\":\\"exec_end\\",'
                     f'\\"line\\":{line_num}}}");'
                 )
-                output.append(stripped)
-                in_main = False
+                output.append(stripped)  # the return statement itself
                 continue
 
             # ----------------------------------------------------------------
-            # Detect int variable declaration: int x = expr;
+            # int variable declaration: int x = expr;
             # ----------------------------------------------------------------
             decl_match = _VAR_DECL.match(stripped)
             if decl_match:
                 indent = decl_match.group(1) or "    "
-                name = decl_match.group(2)
-                declared[name] = declared.get(name, 0) + 1 if name not in declared else 1
-                declared[name] = 1  # Sprint 0: one instance per name
+                name   = decl_match.group(2)
+                declared[name] = 1
                 rid = runtime_id(name)
                 output.append(stripped)
                 s = next_seq()
@@ -200,13 +178,12 @@ class CppSourceInstrumentor:
                 continue
 
             # ----------------------------------------------------------------
-            # Detect variable assignment: x = expr;
-            # Must be a variable we have already declared.
+            # Variable assignment: x = expr;
             # ----------------------------------------------------------------
             assign_match = _VAR_ASSIGN.match(stripped)
             if assign_match and not decl_match:
                 indent = assign_match.group(1) or "    "
-                name = assign_match.group(2)
+                name   = assign_match.group(2)
                 if name in declared:
                     rid = runtime_id(name)
                     output.append(stripped)
@@ -220,7 +197,7 @@ class CppSourceInstrumentor:
                     continue
 
             # ----------------------------------------------------------------
-            # All other lines pass through unchanged
+            # Everything else passes through unchanged
             # ----------------------------------------------------------------
             output.append(stripped)
 
