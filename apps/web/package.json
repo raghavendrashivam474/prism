@@ -1,18 +1,31 @@
 {
-  "name": "prism-workspace",
+  "name": "prism-web",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "apps/web",
-    "packages/trace-model",
-    "packages/visual-state-engine",
-    "packages/timeline",
-    "packages/visualizers/variable-state"
-  ],
   "scripts": {
-    "dev": "npm run dev --workspace=apps/web",
-    "build": "npm run build --workspace=apps/web",
-    "test": "npm run test --workspaces --if-present",
-    "test:web": "npm run test --workspace=apps/web"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
+    "@prism/timeline": "*",
+    "@prism/trace-model": "*",
+    "@prism/visual-state-engine": "*",
+    "@prism/visualizer-variable-state": "*",
+    "next": "15.3.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.3",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
