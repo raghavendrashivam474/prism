@@ -1,0 +1,18 @@
+{
+  "name": "prism-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "packages/trace-model",
+    "packages/visual-state-engine",
+    "packages/timeline",
+    "packages/visualizers/variable-state"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspace=apps/web",
+    "test": "npm run test --workspaces --if-present",
+    "test:web": "npm run test --workspace=apps/web"
+  }
+}
