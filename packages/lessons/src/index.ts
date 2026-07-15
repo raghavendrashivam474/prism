@@ -1,5 +1,6 @@
 // Sprint 2 - Lessons package public exports.
 
+// Domain
 export type {
   LessonDefinition,
   LessonStepDefinition,
@@ -17,3 +18,14 @@ export {
   validateLessonDefinition,
   LessonValidationError,
 } from "./domain/validator";
+
+// Loader
+export type { LessonLoader } from "./loader/loader";
+export {
+  StaticLessonLoader,
+  LessonNotFoundError,
+} from "./loader/loader";
+
+// Catalog
+export type { LessonCatalog } from "./loader/catalog";
+export { StaticLessonCatalog } from "./loader/catalog";
