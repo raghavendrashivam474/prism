@@ -29,3 +29,21 @@ export {
 // Catalog
 export type { LessonCatalog } from "./loader/catalog";
 export { StaticLessonCatalog } from "./loader/catalog";
+
+// Session engine (Milestone 2.4)
+export type {
+  LessonSessionState,
+  LessonSessionStatus,
+  LessonStepState,
+  LessonStepStatus,
+} from "./session/types";
+
+export {
+  startSession,
+  completeActiveStep,
+  activateStep,
+  resetSession,
+  currentStepState,
+  isLessonComplete,
+  LessonSessionError,
+} from "./session/engine";
