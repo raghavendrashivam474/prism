@@ -7,6 +7,8 @@
     "packages/trace-model",
     "packages/visual-state-engine",
     "packages/timeline",
+    "packages/lessons",
+    "packages/objectives",
     "packages/visualizers/variable-state"
   ],
   "scripts": {
