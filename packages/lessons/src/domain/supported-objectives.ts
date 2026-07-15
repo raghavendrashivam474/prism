@@ -1,16 +1,8 @@
 /**
  * Supported objective type identifiers.
  *
- * Temporary constant for Milestone 2.2.
- * From Milestone 2.5 onwards, this will be imported from @prism/objectives.
- *
- * Kept here so the lesson validator can reject unknown objective types
- * before the objectives package is fully populated.
+ * Re-exported from @prism/objectives so the lesson package shares the same
+ * source of truth as the runtime objective domain model.
  */
 
-export const SUPPORTED_OBJECTIVE_TYPES = new Set<string>([
-  "entity_exists",
-  "entity_value_equals",
-  "entity_value_changed",
-  "execution_completed",
-]);
+export { SUPPORTED_OBJECTIVE_TYPES } from "@prism/objectives";

@@ -11,22 +11,18 @@
  * the lesson package does not duplicate objective semantics.
  */
 
+import type { ObjectiveDefinition } from "@prism/objectives";
+
 // ---------------------------------------------------------------------------
-// Objective reference (placeholder for Milestone 2.2)
-//
-// The concrete ObjectiveDefinition union lives in @prism/objectives.
-// We reference it structurally here to keep the lesson model decoupled
-// from the objective type union while it stabilises.
-//
-// From Milestone 2.5 onwards, this alias will resolve to
-// import("@prism/objectives").ObjectiveDefinition.
+// Objective reference
 // ---------------------------------------------------------------------------
 
-export interface ObjectiveDefinitionShape {
-  readonly id: string;
-  readonly type: string;
-  readonly [key: string]: unknown;
-}
+/**
+ * Compatibility alias used by the lessons package.
+ *
+ * The source of truth now lives in @prism/objectives.
+ */
+export type ObjectiveDefinitionShape = ObjectiveDefinition;
 
 // ---------------------------------------------------------------------------
 // Content
