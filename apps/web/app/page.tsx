@@ -1,9 +1,14 @@
 /**
- * PRISM Workspace â€” main page.
+ * PRISM Playground — main page (Milestone 2.13a refactor).
  *
  * The current snapshot is the single authority for all projections.
- * Monaco highlighting, variable panel, and step description
- * all derive from currentSnapshot â€” never from independent state.
+ * Monaco highlighting, variable panel, and step description all derive
+ * from currentSnapshot — never from independent state.
+ *
+ * 2.13a change:
+ *   The page now constructs an HttpExecutionRunner around the API client
+ *   and passes it to useWorkspace. The runner owns ingestion + snapshot
+ *   construction; the page and hook stay thin.
  */
 
 "use client";
@@ -12,6 +17,7 @@ import dynamic from "next/dynamic";
 import { useMemo, useRef, useEffect } from "react";
 import type * as MonacoType from "monaco-editor";
 import { HttpExecutionClient } from "@/lib/execution/client";
+import { HttpExecutionRunner } from "@/lib/execution/runner";
 import { useWorkspace } from "@/lib/workspace/use-workspace";
 import { VariableStateVisualizer } from "@prism/visualizer-variable-state";
 import { LearningIrV01StepDescriber } from "@prism/visualizer-variable-state";
@@ -29,6 +35,7 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
 });
 
 const executionClient = new HttpExecutionClient();
+const executionRunner = new HttpExecutionRunner(executionClient);
 const visualizer = new VariableStateVisualizer();
 const describer = new LearningIrV01StepDescriber();
 
@@ -42,7 +49,7 @@ export default function WorkspacePage() {
     currentSnapshot,
     run,
     navigate,
-  } = useWorkspace(executionClient);
+  } = useWorkspace(executionRunner);
 
   const editorRef = useRef<MonacoType.editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<typeof MonacoType | null>(null);
@@ -98,7 +105,7 @@ export default function WorkspacePage() {
         <div className="flex items-center gap-3">
           <h1 className="font-bold text-gray-900 tracking-tight">PRISM</h1>
           <span className="text-xs text-gray-400 font-mono">
-            C++ â€¢ v0.1 profile
+            C++ • v0.1 profile
           </span>
         </div>
         <button

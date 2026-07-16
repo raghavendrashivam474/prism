@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
+    "@prism/execution-result": "*",
+    "@prism/lessons": "*",
+    "@prism/objectives": "*",
     "@prism/timeline": "*",
     "@prism/trace-model": "*",
     "@prism/visual-state-engine": "*",

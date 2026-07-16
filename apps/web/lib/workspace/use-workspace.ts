@@ -1,23 +1,29 @@
 /**
- * Workspace state hook.
+ * Workspace state hook — Milestone 2.13a refactor.
  *
- * Owns the full execution lifecycle:
+ * Now composes around ExecutionRunner + PrismExecutionResult instead of
+ * inlining ingestion and snapshot construction. The observable behavior
+ * for the playground is unchanged:
+ *
  *   idle -> executing -> trace_ready | failed
  *
- * Builds snapshots once after trace ingestion.
- * Exposes a TimelineController for navigation.
- * Never re-executes C++ during navigation.
+ * Notes:
+ *   - `currentSnapshot` still derives from timeline.currentSnapshot.
+ *   - Failure now retains navigable snapshots when the trace produced them
+ *     (widened failure variant, see 2.13a). The failure PANEL still
+ *     renders based on status===failed; the timeline remains available.
+ *   - The hook no longer knows about ingestion, engine construction, or
+ *     API details. It just holds the current PrismExecutionResult.
  */
 
 "use client";
 
-import { useState, useCallback } from "react";
-import { LearningIrV01Ingestor, TraceIngestionError } from "@prism/trace-model";
-import { DefaultVisualStateEngine } from "@prism/visual-state-engine";
-import { SnapshotTimelineController } from "@prism/timeline";
-import type { TimelineController } from "@prism/timeline";
+import { useState, useCallback, useMemo } from "react";
 import type { VisualStateSnapshot } from "@prism/visual-state-engine";
-import type { ExecutionClient } from "../execution/client";
+import type { TimelineController } from "@prism/timeline";
+import type { PrismExecutionResult } from "@prism/execution-result";
+import { pendingPrismExecutionResult } from "@prism/execution-result";
+import type { ExecutionRunner } from "../execution/runner";
 
 export type WorkspaceStatus = "idle" | "executing" | "trace_ready" | "failed";
 
@@ -28,18 +34,6 @@ export interface WorkspaceFailure {
   diagnostics?: string[];
 }
 
-export interface WorkspaceState {
-  status: WorkspaceStatus;
-  source: string;
-  timeline: TimelineController;
-  snapshots: VisualStateSnapshot[];
-  failure: WorkspaceFailure | null;
-  currentSnapshot: VisualStateSnapshot | null;
-}
-
-const ingestor = new LearningIrV01Ingestor();
-const engine = new DefaultVisualStateEngine();
-
 const STARTER_SOURCE = `int main() {
     int x = 10;
     x = 20;
@@ -48,57 +42,65 @@ const STARTER_SOURCE = `int main() {
     return 0;
 }`;
 
-export function useWorkspace(client: ExecutionClient) {
-  const [status, setStatus] = useState<WorkspaceStatus>("idle");
+export function useWorkspace(runner: ExecutionRunner) {
   const [source, setSource] = useState(STARTER_SOURCE);
-  const [snapshots, setSnapshots] = useState<VisualStateSnapshot[]>([]);
-  const [timeline, setTimeline] = useState<TimelineController>(
-    SnapshotTimelineController.empty(),
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [result, setResult] = useState<PrismExecutionResult>(
+    pendingPrismExecutionResult(),
   );
-  const [failure, setFailure] = useState<WorkspaceFailure | null>(null);
+  // Timeline is stored separately so navigation mutates only this slice
+  // rather than rebuilding the entire PrismExecutionResult on each step.
+  const [timeline, setTimeline] = useState<TimelineController>(
+    result.timeline,
+  );
 
-  const run = useCallback(async () => {
-    if (status === "executing") return;
+  const status: WorkspaceStatus = useMemo(() => {
+    if (isExecuting) return "executing";
+    if (result.status === "pending") return "idle";
+    if (result.status === "failure") return "failed";
+    return "trace_ready";
+  }, [isExecuting, result.status]);
 
-    setStatus("executing");
-    setFailure(null);
+  const failure: WorkspaceFailure | null = useMemo(() => {
+    if (result.status !== "failure") return null;
 
-    try {
-      const rawTrace = await client.execute({ languageId: "cpp", source });
-      const trace = ingestor.ingest(rawTrace);
-      const newSnapshots = engine.buildSnapshots(trace);
-
-      // Check if the trace represents an execution failure
-      const firstEvent = trace.events[0];
-      if (firstEvent?.type === "execution.failed" &&
-          firstEvent.payload.kind === "execution.failed") {
-        setFailure({
-          category: firstEvent.payload.category,
-          message: firstEvent.payload.message,
-          violations: [...firstEvent.payload.violations],
-          diagnostics: [...firstEvent.payload.diagnostics],
-        });
-        setSnapshots(newSnapshots);
-        setTimeline(SnapshotTimelineController.create(newSnapshots));
-        setStatus("failed");
-        return;
-      }
-
-      setSnapshots(newSnapshots);
-      setTimeline(SnapshotTimelineController.create(newSnapshots));
-      setStatus("trace_ready");
-    } catch (err) {
-      const message =
-        err instanceof TraceIngestionError
-          ? `Trace error: ${err.message}`
-          : err instanceof Error
-            ? err.message
-            : "An unexpected error occurred.";
-
-      setFailure({ category: "internal_error", message });
-      setStatus("failed");
+    // Enrich with violations/diagnostics if the trace's failure event
+    // carries them. This preserves the Sprint 1 FailurePanel richness.
+    const lastEvent = result.trace?.events[result.trace.events.length - 1];
+    if (
+      lastEvent?.type === "execution.failed" &&
+      lastEvent.payload.kind === "execution.failed"
+    ) {
+      return {
+        category: result.failure.category,
+        message: result.failure.message,
+        violations: [...lastEvent.payload.violations],
+        diagnostics: [...lastEvent.payload.diagnostics],
+      };
     }
-  }, [status, source, client]);
+
+    return {
+      category: result.failure.category,
+      message: result.failure.message,
+    };
+  }, [result]);
+
+  const snapshots: readonly VisualStateSnapshot[] = result.snapshots;
+
+  const currentSnapshot: VisualStateSnapshot | null =
+    timeline.currentSnapshot ?? snapshots[0] ?? null;
+
+  const execute = useCallback(async () => {
+    if (isExecuting) return;
+    setIsExecuting(true);
+    try {
+      const next = await runner.execute({ languageId: "cpp", source });
+      setResult(next);
+      setTimeline(next.timeline);
+    } finally {
+      setIsExecuting(false);
+    }
+  }, [isExecuting, source, runner]);
 
   const navigate = useCallback(
     (action: "next" | "previous" | "first" | "last" | number) => {
@@ -115,9 +117,6 @@ export function useWorkspace(client: ExecutionClient) {
     [],
   );
 
-  const currentSnapshot =
-    timeline.currentSnapshot ?? snapshots[0] ?? null;
-
   return {
     status,
     source,
@@ -126,7 +125,11 @@ export function useWorkspace(client: ExecutionClient) {
     timeline,
     failure,
     currentSnapshot,
-    run,
+    result,
+    // Preserve the old `run` name so existing page.tsx keeps working
+    // without changes in this commit. 2.13b may rename to `execute`
+    // if the lesson workspace prefers that.
+    run: execute,
     navigate,
   };
 }

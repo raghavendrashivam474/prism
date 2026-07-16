@@ -61,6 +61,9 @@ export type {
 
 export { evaluateStep } from "./evaluation/step-evaluator";
 
+// PrismExecutionResult ? ExecutionOutcome bridge (Milestone 2.13a)
+export { toExecutionOutcome } from "./evaluation/execution-outcome-bridge";
+
 // Lesson attempts (Milestone 2.9)
 export type { LessonAttempt } from "./session/types";
 
