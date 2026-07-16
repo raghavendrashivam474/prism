@@ -9,6 +9,7 @@
     "packages/timeline",
     "packages/lessons",
     "packages/objectives",
+    "packages/execution-result",
     "packages/visualizers/variable-state"
   ],
   "scripts": {
