@@ -66,3 +66,16 @@ export type { LessonAttempt } from "./session/types";
 
 export type { RecordAttemptInput } from "./session/attempt-orchestrator";
 export { recordAttempt } from "./session/attempt-orchestrator";
+
+// Learner feedback (Milestone 2.10)
+export type {
+  LearnerFeedback,
+  LearnerFeedbackTone,
+  ObjectiveFeedback,
+} from "./feedback/types";
+
+export {
+  FeedbackProjector,
+  projectStepFeedback,
+  projectAttemptFeedback,
+} from "./feedback/projector";
