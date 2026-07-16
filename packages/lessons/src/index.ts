@@ -47,3 +47,16 @@ export {
   isLessonComplete,
   LessonSessionError,
 } from "./session/engine";
+
+// Step evaluation (Milestone 2.8)
+export type {
+  ExecutionOutcome,
+  SuccessfulExecutionOutcome,
+  FailedExecutionOutcome,
+  StepObjectiveStatus,
+  StepObjectiveOutcome,
+  StepEvaluationVerdict,
+  StepEvaluation,
+} from "./evaluation/types";
+
+export { evaluateStep } from "./evaluation/step-evaluator";
