@@ -1,5 +1,5 @@
 /**
- * Lesson Session Engine — Milestone 2.4.
+ * Lesson Session Engine — Milestone 2.4 (extended for 2.9).
  *
  * Pure TypeScript. No React, no HTTP, no browser APIs.
  *
@@ -20,10 +20,13 @@
  * Invalid transitions throw LessonSessionError with a machine-readable code.
  * The engine never silently swallows an invalid transition.
  *
- * This milestone does NOT include:
- *   - learner attempts (Milestone 2.9)
- *   - objective evaluation (Milestone 2.7+)
- *   - execution results
+ * Milestone 2.9 addition:
+ *   startSession initialises every step with attempts: [].
+ *   All progression transitions preserve attempts arrays unchanged.
+ *   Attempt append semantics live in attempt-orchestrator.ts, not here,
+ *   because appending an attempt requires an evaluator registry and an
+ *   execution outcome — dependencies the pure progression engine does
+ *   not have.
  */
 
 import type { LessonDefinition } from "../domain/types";
@@ -57,6 +60,7 @@ export class LessonSessionError extends Error {
  *
  * The first step is immediately active. All subsequent steps are locked.
  * The session status is "active".
+ * Every step starts with attempts: [].
  */
 export function startSession(lesson: LessonDefinition): LessonSessionState {
   validateLessonDefinition(lesson);
@@ -64,6 +68,7 @@ export function startSession(lesson: LessonDefinition): LessonSessionState {
   const stepStates: LessonStepState[] = lesson.steps.map((step, index) => ({
     stepId: step.id,
     status: index === 0 ? "active" : "locked",
+    attempts: [],
   }));
 
   return {
@@ -76,6 +81,7 @@ export function startSession(lesson: LessonDefinition): LessonSessionState {
 
 /**
  * Reset a session to the initial state. Equivalent to startSession.
+ * All previously-recorded attempts are cleared.
  */
 export function resetSession(lesson: LessonDefinition): LessonSessionState {
   return startSession(lesson);
@@ -95,6 +101,7 @@ export function resetSession(lesson: LessonDefinition): LessonSessionState {
  *   - currentStepIndex remains unchanged.
  *   - If the active step is the FINAL step, the session status
  *     becomes "completed" and currentStepIndex stays valid.
+ *   - Attempts arrays are preserved unchanged.
  *
  * Throws LessonSessionError if:
  *   - Session is already completed.
@@ -150,6 +157,7 @@ export function completeActiveStep(
  * Activate an available step by its step ID.
  *
  * Only a step with status "available" may be activated.
+ * Attempts arrays are preserved unchanged.
  *
  * Throws LessonSessionError if:
  *   - Session is already completed.

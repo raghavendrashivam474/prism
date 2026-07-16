@@ -60,3 +60,9 @@ export type {
 } from "./evaluation/types";
 
 export { evaluateStep } from "./evaluation/step-evaluator";
+
+// Lesson attempts (Milestone 2.9)
+export type { LessonAttempt } from "./session/types";
+
+export type { RecordAttemptInput } from "./session/attempt-orchestrator";
+export { recordAttempt } from "./session/attempt-orchestrator";
