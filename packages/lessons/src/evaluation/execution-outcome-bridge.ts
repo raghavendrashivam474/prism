@@ -1,5 +1,5 @@
 /**
- * PrismExecutionResult ? ExecutionOutcome bridge — Milestone 2.13a.
+ * PrismExecutionResult ? ExecutionOutcome bridge - Milestone 2.13a.
  *
  * The lesson-side ExecutionOutcome (Milestone 2.8) is structurally very
  * close to PrismExecutionResult (@prism/execution-result), but not the

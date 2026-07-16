@@ -1,18 +1,18 @@
 /**
- * Lesson attempt orchestrator — Milestone 2.9.
+ * Lesson attempt orchestrator - Milestone 2.9.
  *
  * Pure TypeScript. No React, no HTTP, no browser APIs, no I/O.
  *
  * This module bridges three previously-separate concerns:
  *
- *   Session progression       (Milestone 2.4 — session/engine.ts)
- *   Step evaluation           (Milestone 2.8 — evaluation/step-evaluator.ts)
- *   Objective evaluators      (Milestones 2.6, 2.7 — @prism/objectives)
+ *   Session progression       (Milestone 2.4 - session/engine.ts)
+ *   Step evaluation           (Milestone 2.8 - evaluation/step-evaluator.ts)
+ *   Objective evaluators      (Milestones 2.6, 2.7 - @prism/objectives)
  *
  * It answers ONE question per invocation:
  *
  *   Given the current session state, a lesson definition, a learner
- *   submission (source + execution outcome), and an evaluator registry —
+ *   submission (source + execution outcome), and an evaluator registry -
  *   what is the new session state?
  *
  * Behaviour:
@@ -20,7 +20,7 @@
  *   1. Reject if the session is already completed.
  *   2. Reject if there is no active step at currentStepIndex.
  *   3. Locate the matching LessonStepDefinition in the lesson.
- *   4. Call evaluateStep(step, outcome, registry) — no semantic logic here.
+ *   4. Call evaluateStep(step, outcome, registry) - no semantic logic here.
  *   5. Build a new LessonAttempt with monotonic attemptNumber.
  *   6. Append the attempt to the active step.
  *   7. If the evaluation verdict is "complete", advance the step exactly

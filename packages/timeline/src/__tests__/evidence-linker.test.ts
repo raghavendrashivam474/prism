@@ -50,7 +50,7 @@ function makeSnapshots(sequences: number[]): VisualStateSnapshot[] {
 // Resolved cases
 // ---------------------------------------------------------------------------
 
-describe("EvidenceTimelineLinker — resolved", () => {
+describe("EvidenceTimelineLinker - resolved", () => {
   it("resolves a sequence that matches a snapshot", () => {
     const snapshots = makeSnapshots([1, 2, 3, 4, 5]);
     const linker = new EvidenceTimelineLinker();
@@ -109,7 +109,7 @@ describe("EvidenceTimelineLinker — resolved", () => {
 // No-evidence cases
 // ---------------------------------------------------------------------------
 
-describe("EvidenceTimelineLinker — no_evidence", () => {
+describe("EvidenceTimelineLinker - no_evidence", () => {
   const snapshots = makeSnapshots([1, 2, 3]);
 
   it("returns no_evidence/missing for null input", () => {
@@ -152,7 +152,7 @@ describe("EvidenceTimelineLinker — no_evidence", () => {
 // Not-found cases
 // ---------------------------------------------------------------------------
 
-describe("EvidenceTimelineLinker — not_found", () => {
+describe("EvidenceTimelineLinker - not_found", () => {
   it("returns not_found when no snapshot matches the sequence", () => {
     const snapshots = makeSnapshots([1, 2, 3]);
     const result = linkEvidence(snapshots, { sequence: 99 });
@@ -166,7 +166,7 @@ describe("EvidenceTimelineLinker — not_found", () => {
     expect(result.kind).toBe("not_found");
   });
 
-  it("does not throw for not_found — callers may render a diagnostic state", () => {
+  it("does not throw for not_found - callers may render a diagnostic state", () => {
     const snapshots = makeSnapshots([1, 2, 3]);
     expect(() => linkEvidence(snapshots, { sequence: 42 })).not.toThrow();
   });
@@ -176,7 +176,7 @@ describe("EvidenceTimelineLinker — not_found", () => {
 // Determinism / statelessness
 // ---------------------------------------------------------------------------
 
-describe("EvidenceTimelineLinker — determinism", () => {
+describe("EvidenceTimelineLinker - determinism", () => {
   it("repeated resolutions produce equal results", () => {
     const snapshots = makeSnapshots([1, 2, 3, 4, 5]);
     const linker = new EvidenceTimelineLinker();
@@ -213,7 +213,7 @@ describe("EvidenceTimelineLinker — determinism", () => {
 // Structural compatibility with feedback and objective evidence
 // ---------------------------------------------------------------------------
 
-describe("EvidenceTimelineLinker — accepts any object with a sequence field", () => {
+describe("EvidenceTimelineLinker - accepts any object with a sequence field", () => {
   const snapshots = makeSnapshots([1, 2, 3]);
 
   it("accepts an ObjectiveEvidence-shaped input", () => {

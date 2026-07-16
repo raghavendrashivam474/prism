@@ -1,9 +1,9 @@
 /**
- * PRISM Playground — main page (Milestone 2.13a refactor).
+ * PRISM Playground - main page (Milestone 2.13a refactor).
  *
  * The current snapshot is the single authority for all projections.
  * Monaco highlighting, variable panel, and step description all derive
- * from currentSnapshot — never from independent state.
+ * from currentSnapshot - never from independent state.
  *
  * 2.13a change:
  *   The page now constructs an HttpExecutionRunner around the API client
@@ -105,7 +105,7 @@ export default function WorkspacePage() {
         <div className="flex items-center gap-3">
           <h1 className="font-bold text-gray-900 tracking-tight">PRISM</h1>
           <span className="text-xs text-gray-400 font-mono">
-            C++ • v0.1 profile
+            C++ * v0.1 profile
           </span>
         </div>
         <button

@@ -1,5 +1,5 @@
 /**
- * PRISM execution result — Milestone 2.12 (corrected 2.13a).
+ * PRISM execution result - Milestone 2.12 (corrected 2.13a).
  *
  * A PrismExecutionResult represents "PRISM ran a program once" in its
  * complete form: the trace, the reconstructed snapshot timeline, the
@@ -51,13 +51,13 @@ import type { SnapshotTimelineController } from "@prism/timeline";
 /**
  * The lifecycle state of a single PRISM execution attempt.
  *
- *   pending  — no attempt yet, or an attempt is in flight
- *   success  — a trace was produced and completed normally
- *   failure  — the trace ended in execution.failed
+ *   pending  - no attempt yet, or an attempt is in flight
+ *   success  - a trace was produced and completed normally
+ *   failure  - the trace ended in execution.failed
  *              (compilation, unsupported profile, sandbox error, etc.)
  *
  * Status drives which PANEL renders (success detail vs failure detail).
- * Status does NOT drive whether the timeline infrastructure exists —
+ * Status does NOT drive whether the timeline infrastructure exists -
  * the timeline is uniformly available on success and failure.
  */
 export type PrismExecutionStatus = "pending" | "success" | "failure";
@@ -105,7 +105,7 @@ export interface SuccessPrismExecutionResult {
 /**
  * The failure state.
  *
- * A failure result may still carry a trace and snapshots — a trace that
+ * A failure result may still carry a trace and snapshots - a trace that
  * ends in execution.failed is a real execution narrative, and the visual
  * state engine will produce a snapshot for it. The timeline is populated
  * from those snapshots.

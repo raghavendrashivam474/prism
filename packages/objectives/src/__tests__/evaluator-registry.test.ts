@@ -71,7 +71,7 @@ function makeThrowingPlugin(): ObjectiveEvaluatorPlugin<"entity_value_equals"> {
 // Registration
 // ---------------------------------------------------------------------------
 
-describe("ObjectiveEvaluatorRegistry — registration", () => {
+describe("ObjectiveEvaluatorRegistry - registration", () => {
   it("starts empty", () => {
     const registry = new ObjectiveEvaluatorRegistry();
     expect(registry.registeredTypes()).toEqual([]);
@@ -143,7 +143,7 @@ describe("ObjectiveEvaluatorRegistry — registration", () => {
 // Resolution
 // ---------------------------------------------------------------------------
 
-describe("ObjectiveEvaluatorRegistry — resolution", () => {
+describe("ObjectiveEvaluatorRegistry - resolution", () => {
   it("resolves the plugin for a matching objective definition", () => {
     const registry = new ObjectiveEvaluatorRegistry();
     const plugin = makeEntityExistsPlugin(true);
@@ -183,7 +183,7 @@ describe("ObjectiveEvaluatorRegistry — resolution", () => {
 // Single evaluation
 // ---------------------------------------------------------------------------
 
-describe("ObjectiveEvaluatorRegistry — evaluate()", () => {
+describe("ObjectiveEvaluatorRegistry - evaluate()", () => {
   it("returns the plugin's satisfied=true result unchanged", () => {
     const registry = new ObjectiveEvaluatorRegistry();
     registry.register(makeEntityExistsPlugin(true));
@@ -248,7 +248,7 @@ describe("ObjectiveEvaluatorRegistry — evaluate()", () => {
     );
   });
 
-  it("plugin errors propagate — the registry does not swallow them", () => {
+  it("plugin errors propagate - the registry does not swallow them", () => {
     const registry = new ObjectiveEvaluatorRegistry();
     registry.register(makeThrowingPlugin());
 
@@ -269,7 +269,7 @@ describe("ObjectiveEvaluatorRegistry — evaluate()", () => {
 // Batch evaluation
 // ---------------------------------------------------------------------------
 
-describe("ObjectiveEvaluatorRegistry — evaluateAll()", () => {
+describe("ObjectiveEvaluatorRegistry - evaluateAll()", () => {
   it("returns results in the same order as the input definitions", () => {
     const registry = new ObjectiveEvaluatorRegistry();
     registry.register(makeEntityExistsPlugin(true));
@@ -326,7 +326,7 @@ describe("ObjectiveEvaluatorRegistry — evaluateAll()", () => {
 // Determinism
 // ---------------------------------------------------------------------------
 
-describe("ObjectiveEvaluatorRegistry — determinism", () => {
+describe("ObjectiveEvaluatorRegistry - determinism", () => {
   it("repeated evaluations of the same definition return equivalent results", () => {
     const registry = new ObjectiveEvaluatorRegistry();
     registry.register(makeExecutionCompletedPlugin(true));

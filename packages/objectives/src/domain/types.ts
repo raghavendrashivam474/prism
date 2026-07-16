@@ -1,5 +1,5 @@
 /**
- * Runtime objective domain model — Milestone 2.5.
+ * Runtime objective domain model - Milestone 2.5.
  *
  * Objectives describe runtime learning intent.
  * They do NOT describe lesson progression, UI state, or feedback wording.

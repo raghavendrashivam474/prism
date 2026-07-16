@@ -1,5 +1,5 @@
 /**
- * Lesson step evaluation domain types — Milestone 2.8.
+ * Lesson step evaluation domain types - Milestone 2.8.
  *
  * This layer bridges two Sprint 2 boundaries:
  *
@@ -18,13 +18,13 @@
  *   - produce learner-facing feedback (Milestone 2.10)
  *   - link evidence to a timeline (Milestone 2.11)
  *
- * Failure vs unsatisfied distinction (handoff §25):
+ * Failure vs unsatisfied distinction (handoff S25):
  *
  *   EXECUTION FAILURE
  *          ?
  *   VALID EXECUTION WITH UNSATISFIED OBJECTIVE
  *
- * When execution fails, we do NOT mark objectives "unsatisfied" — there was
+ * When execution fails, we do NOT mark objectives "unsatisfied" - there was
  * no runtime to observe. We mark them "not_evaluated" and the step is
  * incomplete.
  */
@@ -45,7 +45,7 @@ import type {
  * reconstructed snapshot timeline.
  *
  * The lesson-side caller is responsible for producing both. This module
- * does not run the visual state engine itself — visual state reconstruction
+ * does not run the visual state engine itself - visual state reconstruction
  * remains owned by the Sprint 1 engine.
  */
 export interface SuccessfulExecutionOutcome {
@@ -79,11 +79,11 @@ export type ExecutionOutcome =
 /**
  * The status of a single objective inside a step evaluation.
  *
- *   satisfied      — objective's evaluator returned satisfied=true
- *   unsatisfied    — objective's evaluator returned satisfied=false against
+ *   satisfied      - objective's evaluator returned satisfied=true
+ *   unsatisfied    - objective's evaluator returned satisfied=false against
  *                    a valid execution
- *   not_evaluated  — execution failed, so no runtime observation was
- *                    possible for this objective (handoff §25)
+ *   not_evaluated  - execution failed, so no runtime observation was
+ *                    possible for this objective (handoff S25)
  */
 export type StepObjectiveStatus =
   | "satisfied"
@@ -109,10 +109,10 @@ export interface StepObjectiveOutcome {
 /**
  * The overall verdict for a step after evaluation.
  *
- *   complete           — execution succeeded AND every objective satisfied
- *   incomplete         — execution succeeded but at least one objective
+ *   complete           - execution succeeded AND every objective satisfied
+ *   incomplete         - execution succeeded but at least one objective
  *                        was unsatisfied
- *   execution_failed   — execution failed; no runtime observation possible
+ *   execution_failed   - execution failed; no runtime observation possible
  */
 export type StepEvaluationVerdict =
   | "complete"

@@ -1,5 +1,5 @@
 /**
- * Lesson Session Engine — Milestone 2.4 (extended for 2.9).
+ * Lesson Session Engine - Milestone 2.4 (extended for 2.9).
  *
  * Pure TypeScript. No React, no HTTP, no browser APIs.
  *
@@ -25,7 +25,7 @@
  *   All progression transitions preserve attempts arrays unchanged.
  *   Attempt append semantics live in attempt-orchestrator.ts, not here,
  *   because appending an attempt requires an evaluator registry and an
- *   execution outcome — dependencies the pure progression engine does
+ *   execution outcome - dependencies the pure progression engine does
  *   not have.
  */
 

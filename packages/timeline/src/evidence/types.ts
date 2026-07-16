@@ -1,13 +1,13 @@
 /**
- * Evidence-to-timeline linking types — Milestone 2.11.
+ * Evidence-to-timeline linking types - Milestone 2.11.
  *
  * The linker resolves a piece of runtime evidence (something carrying a
  * `sequence`) into the array index of the VisualStateSnapshot that proves it.
  *
  * The linker is deliberately generic about what "evidence" is. It takes any
- * object with a numeric `sequence`. This lets any layer — objective evidence
+ * object with a numeric `sequence`. This lets any layer - objective evidence
  * from @prism/objectives, evidenceHint from @prism/lessons feedback, or a
- * future lesson-hint feature — feed the same linker without pulling those
+ * future lesson-hint feature - feed the same linker without pulling those
  * packages into @prism/timeline's dependencies.
  */
 
@@ -54,7 +54,7 @@ export interface ResolvedEvidenceTimelineLink {
 /**
  * The evidence input had no usable sequence.
  *
- * This is a normal case, not an error — feedback for an unsatisfied or
+ * This is a normal case, not an error - feedback for an unsatisfied or
  * not_evaluated objective legitimately has no evidence to point at.
  */
 export interface NoEvidenceLink {
@@ -66,7 +66,7 @@ export interface NoEvidenceLink {
  * The evidence had a sequence, but no matching snapshot exists in the
  * provided snapshot list.
  *
- * This is unexpected in normal flow — it typically indicates the caller
+ * This is unexpected in normal flow - it typically indicates the caller
  * passed the wrong snapshot list. The linker returns rather than throws
  * so callers can gracefully render a "no evidence available" UI state.
  */

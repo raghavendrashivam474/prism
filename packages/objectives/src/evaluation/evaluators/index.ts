@@ -1,5 +1,5 @@
 /**
- * Concrete objective evaluator plugins — Milestone 2.7.
+ * Concrete objective evaluator plugins - Milestone 2.7.
  *
  * Also exposes createDefaultEvaluatorRegistry() as a convenience:
  * returns a ObjectiveEvaluatorRegistry pre-populated with all four

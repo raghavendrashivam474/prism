@@ -1,16 +1,16 @@
 /**
- * EvidenceTimelineLinker — Milestone 2.11.
+ * EvidenceTimelineLinker - Milestone 2.11.
  *
  * Pure. No I/O, no mutation, no controller side-effects.
  *
  * Given a VisualStateSnapshot array and an evidence-like input, resolves
  * to the snapshot index that proves the evidence.
  *
- * Design rules (handoff §23):
+ * Design rules (handoff S23):
  *
  *   - The linker returns an index. It does NOT call
  *     SnapshotTimelineController.select() itself. Selection is a caller
- *     concern — the caller may want to preview the link without navigating.
+ *     concern - the caller may want to preview the link without navigating.
  *   - The linker resolves by matching evidence.sequence against
  *     snapshot.sequence, and returns the snapshot's array position.
  *   - Missing / non-positive sequences resolve to "no_evidence", not an

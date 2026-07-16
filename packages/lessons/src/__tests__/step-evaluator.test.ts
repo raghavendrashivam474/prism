@@ -120,10 +120,10 @@ function failureOutcome(
 }
 
 // ---------------------------------------------------------------------------
-// Execution success — all satisfied
+// Execution success - all satisfied
 // ---------------------------------------------------------------------------
 
-describe("evaluateStep — successful execution, all objectives satisfied", () => {
+describe("evaluateStep - successful execution, all objectives satisfied", () => {
   const registry = createDefaultEvaluatorRegistry();
 
   const trace = buildTrace((add) => {
@@ -187,17 +187,17 @@ describe("evaluateStep — successful execution, all objectives satisfied", () => 
 });
 
 // ---------------------------------------------------------------------------
-// Execution success — some unsatisfied
+// Execution success - some unsatisfied
 // ---------------------------------------------------------------------------
 
-describe("evaluateStep — successful execution, some objectives unsatisfied", () => {
+describe("evaluateStep - successful execution, some objectives unsatisfied", () => {
   const registry = createDefaultEvaluatorRegistry();
 
   const trace = buildTrace((add) => {
     add(executionStarted());
     add(scopeEntered());
     add(entityCreated("var_x_1", "x", 10));
-    // no change to 20 — the value_changed objective will fail
+    // no change to 20 - the value_changed objective will fail
     add(executionCompleted());
   });
 
@@ -242,7 +242,7 @@ describe("evaluateStep — successful execution, some objectives unsatisfied", () 
 // Execution failure
 // ---------------------------------------------------------------------------
 
-describe("evaluateStep — execution failure", () => {
+describe("evaluateStep - execution failure", () => {
   const registry = createDefaultEvaluatorRegistry();
 
   const step = stepWithObjectives([
@@ -290,7 +290,7 @@ describe("evaluateStep — execution failure", () => {
   it("does NOT invoke the registry on failure", () => {
     // Prove no evaluator is called by constructing an EMPTY registry.
     // A successful path against this same objective set would throw
-    // NO_EVALUATOR_REGISTERED — the failure path must not.
+    // NO_EVALUATOR_REGISTERED - the failure path must not.
     const emptyRegistry = new ObjectiveEvaluatorRegistry();
     expect(() =>
       evaluateStep(step, failureOutcome(), emptyRegistry),
@@ -310,7 +310,7 @@ describe("evaluateStep — execution failure", () => {
 // Determinism
 // ---------------------------------------------------------------------------
 
-describe("evaluateStep — determinism", () => {
+describe("evaluateStep - determinism", () => {
   const registry = createDefaultEvaluatorRegistry();
 
   const trace = buildTrace((add) => {
@@ -337,7 +337,7 @@ describe("evaluateStep — determinism", () => {
 // Registry error propagation
 // ---------------------------------------------------------------------------
 
-describe("evaluateStep — registry error propagation", () => {
+describe("evaluateStep - registry error propagation", () => {
   it("propagates NO_EVALUATOR_REGISTERED for unknown objective types on success", () => {
     const emptyRegistry = new ObjectiveEvaluatorRegistry();
     const step = stepWithObjectives([

@@ -76,8 +76,8 @@ describe("toExecutionOutcome", () => {
     const outcome = toExecutionOutcome(result);
     expect(outcome).not.toBeNull();
     if (outcome === null || outcome.kind !== "failure") return;
-    // ExecutionOutcome failure variant intentionally has no trace/snapshots —
-    // handoff §25: on failure, "no runtime observation was possible" for
+    // ExecutionOutcome failure variant intentionally has no trace/snapshots -
+    // handoff S25: on failure, "no runtime observation was possible" for
     // objective evaluation. The bridge respects that even when the underlying
     // PrismExecutionResult carries a failure snapshot for UI navigation.
     expect(outcome.category).toBe("compilation_failed");

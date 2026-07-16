@@ -128,10 +128,10 @@ function failureOutcome(): ExecutionOutcome {
 const registry = createDefaultEvaluatorRegistry();
 
 // ---------------------------------------------------------------------------
-// projectStepFeedback — complete verdict
+// projectStepFeedback - complete verdict
 // ---------------------------------------------------------------------------
 
-describe("projectStepFeedback — complete verdict", () => {
+describe("projectStepFeedback - complete verdict", () => {
   const s = step("s1", "Understanding Variables", [
     { id: "o-exists", type: "entity_exists", displayName: "x" },
     {
@@ -214,10 +214,10 @@ describe("projectStepFeedback — complete verdict", () => {
 });
 
 // ---------------------------------------------------------------------------
-// projectStepFeedback — incomplete verdicts (partial vs retry)
+// projectStepFeedback - incomplete verdicts (partial vs retry)
 // ---------------------------------------------------------------------------
 
-describe("projectStepFeedback — incomplete verdicts", () => {
+describe("projectStepFeedback - incomplete verdicts", () => {
   const s = step("s1", "Change x", [
     { id: "o-exists", type: "entity_exists", displayName: "x" },
     {
@@ -234,7 +234,7 @@ describe("projectStepFeedback — incomplete verdicts", () => {
       add(executionStarted());
       add(scopeEntered());
       add(entityCreated("var_x_1", "x", 10));
-      // no value change to 20 — the changed objective will fail
+      // no value change to 20 - the changed objective will fail
       add(executionCompleted());
     });
     const evaluation = evaluateStep(s, successOutcome(trace), registry);
@@ -303,10 +303,10 @@ describe("projectStepFeedback — incomplete verdicts", () => {
 });
 
 // ---------------------------------------------------------------------------
-// projectStepFeedback — execution failure (handoff §25)
+// projectStepFeedback - execution failure (handoff S25)
 // ---------------------------------------------------------------------------
 
-describe("projectStepFeedback — execution failure (handoff §25)", () => {
+describe("projectStepFeedback - execution failure (handoff S25)", () => {
   const s = step("s1", "Change x", [
     { id: "o-exists", type: "entity_exists", displayName: "x" },
     {
@@ -370,7 +370,7 @@ describe("projectStepFeedback — execution failure (handoff §25)", () => {
 // Determinism
 // ---------------------------------------------------------------------------
 
-describe("projectStepFeedback — determinism", () => {
+describe("projectStepFeedback - determinism", () => {
   const s = step("s1", "Understanding Variables", [
     { id: "o-exists", type: "entity_exists", displayName: "x" },
     { id: "o-done", type: "execution_completed" },
@@ -460,10 +460,10 @@ describe("projectAttemptFeedback", () => {
 });
 
 // ---------------------------------------------------------------------------
-// FeedbackProjector — subclassability
+// FeedbackProjector - subclassability
 // ---------------------------------------------------------------------------
 
-describe("FeedbackProjector — is instantiable and subclassable", () => {
+describe("FeedbackProjector - is instantiable and subclassable", () => {
   it("default projector instance works", () => {
     const projector = new FeedbackProjector();
     const s = step("s1", "Any", [

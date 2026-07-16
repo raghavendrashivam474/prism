@@ -1,5 +1,5 @@
 /**
- * PrismExecutionResult builder — Milestone 2.12 (corrected 2.13a).
+ * PrismExecutionResult builder - Milestone 2.12 (corrected 2.13a).
  *
  * Centralises the composition of a PrismExecutionResult from already-
  * normalised inputs. Callers supply either:

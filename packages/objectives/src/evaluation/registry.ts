@@ -1,5 +1,5 @@
 /**
- * ObjectiveEvaluatorRegistry — Milestone 2.6.
+ * ObjectiveEvaluatorRegistry - Milestone 2.6.
  *
  * The registry owns the mapping from ObjectiveType to evaluator plugin.
  *
@@ -112,7 +112,7 @@ export class ObjectiveEvaluatorRegistry {
   /**
    * Evaluate a single objective definition.
    *
-   * The registry itself performs no semantic checks — it delegates entirely
+   * The registry itself performs no semantic checks - it delegates entirely
    * to the resolved plugin. This preserves Boundary F: evaluators own
    * semantic checks.
    */
@@ -132,7 +132,7 @@ export class ObjectiveEvaluatorRegistry {
    *
    * Returns per-definition results in the same order as the input. If any
    * definition has no registered evaluator, the whole batch fails with the
-   * standard NO_EVALUATOR_REGISTERED error — partial batches are intentionally
+   * standard NO_EVALUATOR_REGISTERED error - partial batches are intentionally
    * not supported. Lesson-level "some objectives satisfied" semantics belong
    * in a later milestone, not here.
    */

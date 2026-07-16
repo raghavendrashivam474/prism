@@ -1,5 +1,5 @@
 /**
- * EntityExistsEvaluator — Milestone 2.7.
+ * EntityExistsEvaluator - Milestone 2.7.
  *
  * Satisfied when execution observed the creation of an entity whose
  * displayName matches the objective's target.

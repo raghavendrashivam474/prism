@@ -202,7 +202,7 @@ describe("activateStep", () => {
     state = completeActiveStep(state);
     state = activateStep(state, "s2");
     state = completeActiveStep(state);
-    // s1 is completed — cannot reactivate
+    // s1 is completed - cannot reactivate
     expect(() => activateStep(state, "s1")).toThrow(LessonSessionError);
   });
 
@@ -281,7 +281,7 @@ describe("full lesson progression", () => {
     expect(state.currentStepIndex).toBe(2);
     expect(state.stepStates[2].status).toBe("active");
 
-    // Complete final step — session completes
+    // Complete final step - session completes
     state = completeActiveStep(state);
     expect(state.status).toBe("completed");
     expect(state.stepStates.every((s) => s.status === "completed")).toBe(true);

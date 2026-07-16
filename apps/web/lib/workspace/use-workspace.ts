@@ -1,5 +1,5 @@
 /**
- * Workspace state hook — Milestone 2.13a refactor.
+ * Workspace state hook - Milestone 2.13a refactor.
  *
  * Now composes around ExecutionRunner + PrismExecutionResult instead of
  * inlining ingestion and snapshot construction. The observable behavior

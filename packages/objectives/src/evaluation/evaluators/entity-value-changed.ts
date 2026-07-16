@@ -1,5 +1,5 @@
 /**
- * EntityValueChangedEvaluator — Milestone 2.7.
+ * EntityValueChangedEvaluator - Milestone 2.7.
  *
  * Satisfied when a DIRECT observed transition from `from` to `to` happened
  * for an entity matching displayName. "Direct" means a single

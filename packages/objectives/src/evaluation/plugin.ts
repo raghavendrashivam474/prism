@@ -1,5 +1,5 @@
 /**
- * Objective evaluator plugin contract — Milestone 2.6.
+ * Objective evaluator plugin contract - Milestone 2.6.
  *
  * Every runtime objective type is evaluated by exactly one plugin.
  * Plugins are registered with the ObjectiveEvaluatorRegistry.
@@ -10,7 +10,7 @@
  *
  * Plugins MUST:
  *   - be pure (given the same context + definition, return the same result)
- *   - not throw for unsatisfied objectives — return satisfied=false instead
+ *   - not throw for unsatisfied objectives - return satisfied=false instead
  *   - not produce learner-facing wording
  *   - not mutate the context or its arrays
  *

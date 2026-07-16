@@ -1,5 +1,5 @@
 /**
- * evaluateStep — Milestone 2.8.
+ * evaluateStep - Milestone 2.8.
  *
  * Pure function. Given:
  *
@@ -26,7 +26,7 @@
  *
  * A step with zero objectives is intentionally impossible: lesson validation
  * (Milestone 2.2) rejects empty objectives arrays. This function does NOT
- * re-validate — it trusts the definition it receives.
+ * re-validate - it trusts the definition it receives.
  *
  * This function does not throw for any evaluator returning satisfied=false.
  * It DOES propagate any error thrown by the registry (missing evaluator,

@@ -1,5 +1,5 @@
 /**
- * ExecutionRunner — Milestone 2.13a.
+ * ExecutionRunner - Milestone 2.13a.
  *
  * The single orchestration entry point for "run this source code and give
  * me a PrismExecutionResult." Owns:

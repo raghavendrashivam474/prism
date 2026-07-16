@@ -1,8 +1,8 @@
 /**
- * Objective evaluation domain types — Milestone 2.6.
+ * Objective evaluation domain types - Milestone 2.6.
  *
  * These types describe what an objective evaluator consumes and produces.
- * They do NOT implement evaluation semantics — that arrives in Milestone 2.7
+ * They do NOT implement evaluation semantics - that arrives in Milestone 2.7
  * as concrete plugin implementations.
  *
  * Boundary reminder:
@@ -74,8 +74,8 @@ export interface ObjectiveEvidence {
 /**
  * The result an evaluator returns for a single objective definition.
  *
- * `satisfied` — pure semantic answer, no wording.
- * `evidence`  — zero or more runtime facts supporting the answer.
+ * `satisfied` - pure semantic answer, no wording.
+ * `evidence`  - zero or more runtime facts supporting the answer.
  *
  * An evaluator MAY return an unsatisfied result with evidence (for example,
  * "x reached 15 but never 20"). An evaluator MAY return a satisfied result

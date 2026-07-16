@@ -1,5 +1,5 @@
 /**
- * Lesson session domain types — Milestones 2.4 and 2.9.
+ * Lesson session domain types - Milestones 2.4 and 2.9.
  *
  * A LessonSessionState represents where a learner currently is inside a lesson:
  *   - which step is active
@@ -33,12 +33,12 @@ export type LessonStepStatus = "locked" | "available" | "active" | "completed";
  * lesson history and per-attempt persistence.
  *
  * Fields:
- *   attemptNumber — 1-based, monotonic within the step
- *   submittedAt   — ISO 8601 timestamp string, produced deterministically
+ *   attemptNumber - 1-based, monotonic within the step
+ *   submittedAt   - ISO 8601 timestamp string, produced deterministically
  *                   via injected clock (see attempt-orchestrator.recordAttempt)
- *   source        — the learner-submitted source code
- *   outcome       — the ExecutionOutcome the caller obtained by running it
- *   evaluation    — the StepEvaluation produced by evaluateStep against the
+ *   source        - the learner-submitted source code
+ *   outcome       - the ExecutionOutcome the caller obtained by running it
+ *   evaluation    - the StepEvaluation produced by evaluateStep against the
  *                   step and outcome
  *
  * Attempts contain NO learner-facing wording. Feedback wording is a
@@ -64,7 +64,7 @@ export interface LessonStepState {
    *
    * Initial state is [] (established by startSession).
    * resetSession clears this back to [].
-   * completeActiveStep and activateStep never modify attempts —
+   * completeActiveStep and activateStep never modify attempts -
    * only recordAttempt appends.
    */
   readonly attempts: readonly LessonAttempt[];

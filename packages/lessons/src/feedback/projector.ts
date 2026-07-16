@@ -1,19 +1,19 @@
 /**
- * FeedbackProjector — Milestone 2.10.
+ * FeedbackProjector - Milestone 2.10.
  *
  * Projects a StepEvaluation into a LearnerFeedback.
  *
  * Design notes:
  *   - Deterministic. Same evaluation always yields identical feedback.
  *   - No dependency on evaluator plugins. Consumes ONLY the semantic result.
- *   - Handoff §25 rule: on execution failure, do NOT claim objectives were
+ *   - Handoff S25 rule: on execution failure, do NOT claim objectives were
  *     unsatisfied. Say the program did not execute. Objectives are described
  *     as not_evaluated in that case.
- *   - Handoff §24 rule: feedback wording lives here, not in evaluators.
+ *   - Handoff S24 rule: feedback wording lives here, not in evaluators.
  *   - Subclassable: authors can override per-objective-type message builders
  *     to customise wording without touching evaluators. Sprint 2 ships a
  *     single default projector.
- *   - No I18n hook yet — Sprint 2 is English-only.
+ *   - No I18n hook yet - Sprint 2 is English-only.
  */
 
 import type {
@@ -89,7 +89,7 @@ export class FeedbackProjector {
    * Convenience wrapper that projects feedback for the most recent attempt
    * on a step.
    *
-   * Throws if the attempt's evaluation.stepId does not match the step's id —
+   * Throws if the attempt's evaluation.stepId does not match the step's id -
    * this is a programmer error, not a learner-visible failure.
    */
   projectAttemptFeedback(
@@ -132,8 +132,8 @@ export class FeedbackProjector {
       heading: "Your program did not execute",
       summary:
         evaluation.failure !== null
-          ? `Execution failed (${evaluation.failure.category}). Fix the error and run again — no runtime evidence was produced.`
-          : "Execution failed. Fix the error and run again — no runtime evidence was produced.",
+          ? `Execution failed (${evaluation.failure.category}). Fix the error and run again - no runtime evidence was produced.`
+          : "Execution failed. Fix the error and run again - no runtime evidence was produced.",
       objectives,
     };
   }

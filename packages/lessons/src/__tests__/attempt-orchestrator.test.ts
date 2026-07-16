@@ -137,7 +137,7 @@ const now = () => FIXED_NOW;
 // Baseline: startSession initialises attempts to []
 // ---------------------------------------------------------------------------
 
-describe("startSession — attempts initialisation (Milestone 2.9)", () => {
+describe("startSession - attempts initialisation (Milestone 2.9)", () => {
   it("initialises every step with empty attempts", () => {
     const state = startSession(makeLesson([makeStep("s1"), makeStep("s2")]));
     for (const step of state.stepStates) {
@@ -147,10 +147,10 @@ describe("startSession — attempts initialisation (Milestone 2.9)", () => {
 });
 
 // ---------------------------------------------------------------------------
-// recordAttempt — successful attempt path
+// recordAttempt - successful attempt path
 // ---------------------------------------------------------------------------
 
-describe("recordAttempt — successful attempt", () => {
+describe("recordAttempt - successful attempt", () => {
   const registry = createDefaultEvaluatorRegistry();
 
   const lesson = makeLesson([
@@ -250,10 +250,10 @@ describe("recordAttempt — successful attempt", () => {
 });
 
 // ---------------------------------------------------------------------------
-// recordAttempt — unsatisfying attempt path
+// recordAttempt - unsatisfying attempt path
 // ---------------------------------------------------------------------------
 
-describe("recordAttempt — unsatisfying attempt", () => {
+describe("recordAttempt - unsatisfying attempt", () => {
   const registry = createDefaultEvaluatorRegistry();
 
   const lesson = makeLesson([
@@ -318,10 +318,10 @@ describe("recordAttempt — unsatisfying attempt", () => {
 });
 
 // ---------------------------------------------------------------------------
-// recordAttempt — execution failure path (handoff §25)
+// recordAttempt - execution failure path (handoff S25)
 // ---------------------------------------------------------------------------
 
-describe("recordAttempt — execution failure", () => {
+describe("recordAttempt - execution failure", () => {
   const registry = createDefaultEvaluatorRegistry();
 
   const lesson = makeLesson([makeStep("s1")]);
@@ -380,10 +380,10 @@ describe("recordAttempt — execution failure", () => {
 });
 
 // ---------------------------------------------------------------------------
-// recordAttempt — final step completion
+// recordAttempt - final step completion
 // ---------------------------------------------------------------------------
 
-describe("recordAttempt — final step completion", () => {
+describe("recordAttempt - final step completion", () => {
   const registry = createDefaultEvaluatorRegistry();
   const lesson = makeLesson([makeStep("only")]);
 
@@ -417,10 +417,10 @@ describe("recordAttempt — final step completion", () => {
 });
 
 // ---------------------------------------------------------------------------
-// recordAttempt — invalid transitions
+// recordAttempt - invalid transitions
 // ---------------------------------------------------------------------------
 
-describe("recordAttempt — invalid transitions", () => {
+describe("recordAttempt - invalid transitions", () => {
   const registry = createDefaultEvaluatorRegistry();
   const lesson = makeLesson([makeStep("only")]);
 
@@ -502,7 +502,7 @@ describe("recordAttempt — invalid transitions", () => {
 // Immutability
 // ---------------------------------------------------------------------------
 
-describe("recordAttempt — immutability", () => {
+describe("recordAttempt - immutability", () => {
   const registry = createDefaultEvaluatorRegistry();
   const lesson = makeLesson([makeStep("s1"), makeStep("s2")]);
   const goodTrace = buildTrace((add) => {
@@ -550,7 +550,7 @@ describe("recordAttempt — immutability", () => {
 // Full progression flow via recordAttempt + activateStep
 // ---------------------------------------------------------------------------
 
-describe("recordAttempt — full progression via orchestrator", () => {
+describe("recordAttempt - full progression via orchestrator", () => {
   const registry = createDefaultEvaluatorRegistry();
   const lesson = makeLesson([makeStep("s1"), makeStep("s2")]);
   const goodTrace = buildTrace((add) => {

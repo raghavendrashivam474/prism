@@ -1,10 +1,10 @@
 /**
- * ExecutionCompletedEvaluator — Milestone 2.7.
+ * ExecutionCompletedEvaluator - Milestone 2.7.
  *
  * Satisfied when the trace contains an execution.completed event.
  *
  * A trace with an execution.failed event does NOT satisfy this objective.
- * It also does NOT throw — Sprint 2 section 25 makes clear that lesson-level
+ * It also does NOT throw - Sprint 2 section 25 makes clear that lesson-level
  * "should we even evaluate?" logic belongs to Milestone 2.8, not here.
  * This evaluator simply reports satisfied=false in that case.
  */

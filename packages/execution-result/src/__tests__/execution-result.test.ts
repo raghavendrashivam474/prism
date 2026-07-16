@@ -132,10 +132,10 @@ describe("buildSuccessPrismExecutionResult", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Failure — pure transport (no trace)
+// Failure - pure transport (no trace)
 // ---------------------------------------------------------------------------
 
-describe("buildFailurePrismExecutionResult — pure transport failure", () => {
+describe("buildFailurePrismExecutionResult - pure transport failure", () => {
   it("status is failure", () => {
     const result = buildFailurePrismExecutionResult({
       failure: { category: "internal_error", message: "network down" },
@@ -182,10 +182,10 @@ describe("buildFailurePrismExecutionResult — pure transport failure", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Failure — trace-backed (execution narrative that ended in failure)
+// Failure - trace-backed (execution narrative that ended in failure)
 // ---------------------------------------------------------------------------
 
-describe("buildFailurePrismExecutionResult — trace-backed failure", () => {
+describe("buildFailurePrismExecutionResult - trace-backed failure", () => {
   const trace = makeTrace();
   const snapshots = [makeSnapshot(0, 1)];
 
@@ -237,7 +237,7 @@ describe("buildFailurePrismExecutionResult — trace-backed failure", () => {
 // Invariant: timeline.currentSnapshot === snapshots[timeline.currentIndex]
 // ---------------------------------------------------------------------------
 
-describe("PrismExecutionResult invariant — timeline currentSnapshot matches snapshots[currentIndex]", () => {
+describe("PrismExecutionResult invariant - timeline currentSnapshot matches snapshots[currentIndex]", () => {
   it("holds for success with multiple snapshots", () => {
     const trace = makeTrace();
     const snapshots = [makeSnapshot(0, 1), makeSnapshot(1, 2), makeSnapshot(2, 3)];
@@ -276,7 +276,7 @@ describe("PrismExecutionResult invariant — timeline currentSnapshot matches snap
 // Discriminator patterns
 // ---------------------------------------------------------------------------
 
-describe("PrismExecutionResult — discriminated union narrowing", () => {
+describe("PrismExecutionResult - discriminated union narrowing", () => {
   it("allows narrowing on status = success", () => {
     const trace = makeTrace();
     const snapshots = [makeSnapshot(0, 1)];
@@ -316,7 +316,7 @@ describe("PrismExecutionResult — discriminated union narrowing", () => {
 // Union builder
 // ---------------------------------------------------------------------------
 
-describe("buildPrismExecutionResult — union builder", () => {
+describe("buildPrismExecutionResult - union builder", () => {
   it("dispatches to pending", () => {
     expect(buildPrismExecutionResult({ status: "pending" }).status).toBe("pending");
   });
@@ -361,7 +361,7 @@ describe("buildPrismExecutionResult — union builder", () => {
 // Independence between results
 // ---------------------------------------------------------------------------
 
-describe("PrismExecutionResult — independence", () => {
+describe("PrismExecutionResult - independence", () => {
   it("two pending results have independent timeline controllers", () => {
     expect(pendingPrismExecutionResult().timeline).not.toBe(
       pendingPrismExecutionResult().timeline,

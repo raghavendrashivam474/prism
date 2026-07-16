@@ -1,5 +1,5 @@
 /**
- * EntityValueEqualsEvaluator — Milestone 2.7.
+ * EntityValueEqualsEvaluator - Milestone 2.7.
  *
  * Satisfied when an entity with the target displayName was observed holding
  * the target value at any point during execution.
