@@ -28,3 +28,12 @@ export type { ObjectiveEvaluatorPlugin } from "./evaluation/plugin";
 
 export { ObjectiveEvaluatorRegistry } from "./evaluation/registry";
 export { ObjectiveEvaluatorRegistryError } from "./evaluation/errors";
+
+// Concrete evaluators (Milestone 2.7)
+export {
+  EntityExistsEvaluator,
+  EntityValueEqualsEvaluator,
+  EntityValueChangedEvaluator,
+  ExecutionCompletedEvaluator,
+  createDefaultEvaluatorRegistry,
+} from "./evaluation/evaluators";
