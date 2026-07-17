@@ -1,13 +1,19 @@
 /**
- * LessonFeedbackPanel - Milestone 2.13b.
+ * LessonFeedbackPanel.
  *
  * Renders a LearnerFeedback record. Tone drives styling; text is taken
  * verbatim from the projector output. Per-objective entries with an
- * evidenceHint expose a clickable link that jumps the timeline to the
- * proving snapshot via the parent's onJumpToEvidence callback.
+ * evidenceHint expose a "Show Me" button that focuses the timeline on
+ * the proving snapshot via the parent's onShowMe callback.
+ *
+ * Milestone 2.15 additions:
+ *   - "Show Me" button on satisfied objectives that have evidence.
+ *     The button does not render for objectives without evidence.
+ *   - The existing "jump to evidence (step N)" link remains as a
+ *     compact secondary affordance.
  *
  * This component does NOT know how the timeline works. It just calls
- * onJumpToEvidence with a sequence number.
+ * onShowMe with a sequence number.
  */
 
 import type {
@@ -18,7 +24,7 @@ import type {
 
 interface Props {
   feedback: LearnerFeedback;
-  onJumpToEvidence(sequence: number): void;
+  onShowMe(sequence: number): void;
   onContinue?: () => void;
   canContinue?: boolean;
 }
@@ -61,7 +67,7 @@ function objectiveBadgeLabel(o: ObjectiveFeedback): string {
 
 export function LessonFeedbackPanel({
   feedback,
-  onJumpToEvidence,
+  onShowMe,
   onContinue,
   canContinue,
 }: Props) {
@@ -79,36 +85,51 @@ export function LessonFeedbackPanel({
       </div>
 
       <ul className="space-y-2">
-        {feedback.objectives.map((o) => (
-          <li
-            key={o.objectiveId}
-            className={`rounded border p-2 ${OBJECTIVE_TONE_STYLES[o.tone]}`}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-sm font-medium text-gray-900">
-                {o.title}
-              </span>
-              <span
-                className={`text-xs font-semibold rounded px-2 py-0.5 ${OBJECTIVE_BADGE_STYLES[o.tone]}`}
-              >
-                {objectiveBadgeLabel(o)}
-              </span>
-            </div>
-            <p className="text-sm text-gray-700 mt-1">{o.body}</p>
-            {o.evidenceHint !== null && (
-              <button
-                onClick={() => onJumpToEvidence(o.evidenceHint!.sequence)}
-                className="mt-1 text-xs font-mono text-blue-700 hover:text-blue-900 hover:underline"
-              >
-                jump to evidence (step {o.evidenceHint.sequence})
-              </button>
-            )}
-          </li>
-        ))}
+        {feedback.objectives.map((o) => {
+          const hasEvidence = o.evidenceHint !== null;
+          return (
+            <li
+              key={o.objectiveId}
+              className={`rounded border p-2 ${OBJECTIVE_TONE_STYLES[o.tone]}`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-medium text-gray-900">
+                  {o.title}
+                </span>
+                <span
+                  className={`text-xs font-semibold rounded px-2 py-0.5 ${OBJECTIVE_BADGE_STYLES[o.tone]}`}
+                >
+                  {objectiveBadgeLabel(o)}
+                </span>
+              </div>
+              <p className="text-sm text-gray-700 mt-1">{o.body}</p>
+
+              {hasEvidence && (
+                <div className="mt-2 flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => onShowMe(o.evidenceHint!.sequence)}
+                    className="text-xs font-semibold rounded border border-blue-300 bg-white text-blue-700 px-2 py-1 hover:bg-blue-50 transition-colors"
+                  >
+                    Show me
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onShowMe(o.evidenceHint!.sequence)}
+                    className="text-xs font-mono text-blue-700 hover:text-blue-900 hover:underline"
+                  >
+                    jump to evidence (step {o.evidenceHint!.sequence})
+                  </button>
+                </div>
+              )}
+            </li>
+          );
+        })}
       </ul>
 
       {onContinue && canContinue && (
         <button
+          type="button"
           onClick={onContinue}
           className="w-full mt-2 px-3 py-1.5 rounded bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-colors"
         >

@@ -1,11 +1,20 @@
 /**
- * Lesson workspace page - Milestone 2.13b.
+ * Lesson workspace page.
  *
  * Route: /lesson/[id]
  *
  * Composes every Sprint 2 domain package into a full lesson experience.
  * The page itself is thin - all state lives in useLessonWorkspace, all
  * transitions delegate to @prism/lessons pure functions.
+ *
+ * Milestone 2.15 additions:
+ *   - Workspace mode aware rendering (active | review).
+ *   - Clickable completed progress chips enter review mode.
+ *   - Prominent review banner with "Return to current step".
+ *   - Monaco editor is read-only in review mode.
+ *   - Reset stays visible in review mode but is disabled with an
+ *     explanation.
+ *   - Show Me on satisfied objectives (delegated to the feedback panel).
  */
 
 "use client";
@@ -57,6 +66,8 @@ export default function LessonPage({
     session,
     activeStep,
     activeStepState,
+    displayedStep,
+    displayedStepState,
     lessonComplete,
     canExecute,
     source,
@@ -66,6 +77,11 @@ export default function LessonPage({
     timeline,
     currentSnapshot,
     feedback,
+    mode,
+    isInteractive,
+    reviewingStepId,
+    enterReviewMode,
+    exitReviewMode,
     execute,
     continueToStep,
     resetLesson,
@@ -144,7 +160,12 @@ export default function LessonPage({
     );
   }
 
-  if (lesson === null || session === null || activeStep === null) {
+  if (
+    lesson === null ||
+    session === null ||
+    activeStep === null ||
+    displayedStep === null
+  ) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
         <p className="text-sm text-gray-400 animate-pulse">Loading lesson...</p>
@@ -152,13 +173,18 @@ export default function LessonPage({
     );
   }
 
-  const currentStepNumber =
-    session.stepStates.findIndex((s) => s.stepId === activeStep.id) + 1;
+  const displayedStepNumber =
+    session.stepStates.findIndex((s) => s.stepId === displayedStep.id) + 1;
 
   const stepIsCompletedButNotAdvanced =
     activeStepState !== null &&
     activeStepState.status === "completed" &&
     !lessonComplete;
+
+  const resetTooltip =
+    mode === "review"
+      ? "Return to the active step before resetting the lesson."
+      : undefined;
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
@@ -171,25 +197,36 @@ export default function LessonPage({
         </div>
 
         <div className="flex-1 flex justify-center">
-          <LessonProgressPanel lesson={lesson} session={session} />
+          <LessonProgressPanel
+            lesson={lesson}
+            session={session}
+            reviewingStepId={reviewingStepId}
+            onReviewStep={enterReviewMode}
+          />
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           <button
+            type="button"
             onClick={resetLesson}
-            className="px-3 py-1.5 rounded border border-gray-300 text-gray-700 text-sm hover:bg-gray-50 transition-colors"
+            disabled={mode === "review"}
+            title={resetTooltip}
+            className="px-3 py-1.5 rounded border border-gray-300 text-gray-700 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Reset
           </button>
           <button
+            type="button"
             onClick={execute}
             disabled={!canExecute}
             title={
-              stepIsCompletedButNotAdvanced
-                ? "This step is already complete. Click Continue to next step."
-                : lessonComplete
-                  ? "The lesson is complete."
-                  : undefined
+              mode === "review"
+                ? "You are reviewing a completed step. Return to the current step to run."
+                : stepIsCompletedButNotAdvanced
+                  ? "This step is already complete. Click Continue to next step."
+                  : lessonComplete
+                    ? "The lesson is complete."
+                    : undefined
             }
             className="px-4 py-1.5 rounded bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
@@ -200,8 +237,13 @@ export default function LessonPage({
 
       <div className="flex flex-1 min-h-0">
         <div className="w-1/2 flex flex-col border-r border-gray-200">
-          <div className="px-3 py-1.5 bg-white border-b border-gray-100 shrink-0">
+          <div className="px-3 py-1.5 bg-white border-b border-gray-100 shrink-0 flex items-center justify-between">
             <span className="text-xs font-mono text-gray-500">SOURCE</span>
+            {mode === "review" && (
+              <span className="text-xs font-semibold text-green-700">
+                REVIEW (read-only)
+              </span>
+            )}
           </div>
           <div className="flex-1 min-h-0">
             <MonacoEditor
@@ -218,6 +260,7 @@ export default function LessonPage({
                 folding: false,
                 lineDecorationsWidth: 8,
                 lineNumbersMinChars: 3,
+                readOnly: !isInteractive,
               }}
               onMount={(editor, monaco) => {
                 editorRef.current = editor;
@@ -233,13 +276,33 @@ export default function LessonPage({
           </div>
 
           <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
+            {mode === "review" && (
+              <div className="rounded-lg border border-green-400 bg-green-50 p-4 space-y-2">
+                <p className="font-semibold text-green-900">
+                  Reviewing "{displayedStep.title}"
+                </p>
+                <p className="text-sm text-green-800">
+                  You are viewing a completed step. The editor is read-only,
+                  and Run is disabled. Use the timeline and Show Me links to
+                  investigate the recorded execution.
+                </p>
+                <button
+                  type="button"
+                  onClick={exitReviewMode}
+                  className="mt-1 px-3 py-1.5 rounded bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-colors"
+                >
+                  Return to current step
+                </button>
+              </div>
+            )}
+
             <LessonStepPanel
-              step={activeStep}
-              stepNumber={currentStepNumber}
+              step={displayedStep}
+              stepNumber={displayedStepNumber}
               totalSteps={session.stepStates.length}
             />
 
-            {lessonComplete && (
+            {lessonComplete && mode === "active" && (
               <div className="rounded-lg border border-green-300 bg-green-50 p-4">
                 <p className="font-semibold text-green-800">Lesson complete</p>
                 <p className="text-sm text-green-900 mt-1">
@@ -284,14 +347,16 @@ export default function LessonPage({
             {feedback && (
               <LessonFeedbackPanel
                 feedback={feedback}
-                onJumpToEvidence={jumpToEvidence}
+                onShowMe={jumpToEvidence}
                 onContinue={
-                  nextAvailableStepId
+                  mode === "active" && nextAvailableStepId
                     ? () => continueToStep(nextAvailableStepId!)
                     : undefined
                 }
                 canContinue={
-                  feedback.tone === "success" && nextAvailableStepId !== null
+                  mode === "active" &&
+                  feedback.tone === "success" &&
+                  nextAvailableStepId !== null
                 }
               />
             )}

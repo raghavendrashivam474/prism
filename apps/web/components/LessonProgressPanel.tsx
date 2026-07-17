@@ -1,13 +1,13 @@
 /**
- * LessonProgressPanel - Milestone 2.13b.
+ * LessonProgressPanel.
  *
  * Compact horizontal step list showing status per step:
- *   completed - green check
+ *   completed - green check; clickable to enter review mode (Milestone 2.15)
  *   active    - blue outline
  *   available - gray outline
  *   locked    - dim
  *
- * Purely presentational.
+ * Only completed chips are interactive.
  */
 
 import type {
@@ -19,6 +19,8 @@ import type {
 interface Props {
   lesson: LessonDefinition;
   session: LessonSessionState;
+  reviewingStepId?: string | null;
+  onReviewStep?(stepId: string): void;
 }
 
 const STATUS_STYLES: Record<LessonStepStatus, string> = {
@@ -37,20 +39,49 @@ function statusLabel(status: LessonStepStatus): string {
   }
 }
 
-export function LessonProgressPanel({ lesson, session }: Props) {
+export function LessonProgressPanel({
+  lesson,
+  session,
+  reviewingStepId,
+  onReviewStep,
+}: Props) {
   return (
     <div className="flex items-center gap-2">
       {session.stepStates.map((s, i) => {
         const stepDef = lesson.steps.find((d) => d.id === s.stepId);
+        const isCompleted = s.status === "completed";
+        const isReviewing = reviewingStepId === s.stepId;
+        const canReview =
+          isCompleted && onReviewStep && s.attempts.length > 0;
+
+        const baseClasses =
+          "flex items-center gap-2 px-2 py-1 rounded border text-xs";
+        const statusClasses = STATUS_STYLES[s.status];
+        const interactiveClasses = canReview
+          ? "cursor-pointer hover:ring-2 hover:ring-green-300"
+          : "";
+        const reviewingClasses = isReviewing ? "ring-2 ring-green-400" : "";
+
+        const title = canReview
+          ? `Review ${stepDef?.title ?? s.stepId}`
+          : stepDef?.title ?? s.stepId;
+
+        const handleClick = canReview
+          ? () => onReviewStep!(s.stepId)
+          : undefined;
+
         return (
-          <div
+          <button
             key={s.stepId}
-            className={`flex items-center gap-2 px-2 py-1 rounded border text-xs ${STATUS_STYLES[s.status]}`}
-            title={stepDef?.title ?? s.stepId}
+            type="button"
+            className={`${baseClasses} ${statusClasses} ${interactiveClasses} ${reviewingClasses}`}
+            title={title}
+            onClick={handleClick}
+            disabled={!canReview}
           >
             <span className="font-mono">{i + 1}</span>
             <span className="hidden sm:inline">{statusLabel(s.status)}</span>
-          </div>
+          </button>
         );
       })}
     </div>

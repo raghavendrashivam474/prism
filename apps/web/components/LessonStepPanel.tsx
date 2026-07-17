@@ -1,8 +1,13 @@
 /**
- * LessonStepPanel - Milestone 2.13b.
+ * LessonStepPanel.
  *
- * Renders the active step's content: title, explanation, instruction,
- * and observation prompt. Purely presentational.
+ * Renders the active step's content: title, explanation (multi-paragraph),
+ * instruction, and observation prompt. Purely presentational.
+ *
+ * Milestone 2.15: explanation is split on blank lines (\n\n) and each
+ * fragment renders as its own paragraph. This lets lesson authors visually
+ * separate a "Learning outcome:" line from the body without any change to
+ * the LessonContent schema.
  */
 
 import type { LessonStepDefinition } from "@prism/lessons";
@@ -13,7 +18,16 @@ interface Props {
   totalSteps: number;
 }
 
+function splitParagraphs(text: string): string[] {
+  return text
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter((p) => p.length > 0);
+}
+
 export function LessonStepPanel({ step, stepNumber, totalSteps }: Props) {
+  const paragraphs = splitParagraphs(step.content.explanation);
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-3">
       <div>
@@ -25,9 +39,13 @@ export function LessonStepPanel({ step, stepNumber, totalSteps }: Props) {
         </h2>
       </div>
 
-      <p className="text-sm text-gray-700 leading-relaxed">
-        {step.content.explanation}
-      </p>
+      <div className="space-y-2">
+        {paragraphs.map((p, i) => (
+          <p key={i} className="text-sm text-gray-700 leading-relaxed">
+            {p}
+          </p>
+        ))}
+      </div>
 
       {step.content.instruction && (
         <div className="rounded border-l-4 border-blue-400 bg-blue-50 px-3 py-2">
