@@ -4,10 +4,10 @@
  * Renders the active step's content: title, explanation (multi-paragraph),
  * instruction, and observation prompt. Purely presentational.
  *
- * Milestone 2.15: explanation is split on blank lines (\n\n) and each
- * fragment renders as its own paragraph. This lets lesson authors visually
- * separate a "Learning outcome:" line from the body without any change to
- * the LessonContent schema.
+ * Milestone 2.16: on step change, the outer container replays a subtle
+ * one-shot border pulse animation. The animation is triggered by React
+ * remounting the component (via a key prop supplied by the parent based
+ * on the step id), so no timers or effect state are needed here.
  */
 
 import type { LessonStepDefinition } from "@prism/lessons";
@@ -29,7 +29,7 @@ export function LessonStepPanel({ step, stepNumber, totalSteps }: Props) {
   const paragraphs = splitParagraphs(step.content.explanation);
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-3">
+    <div className="prism-step-pulse bg-white rounded-lg border border-gray-200 p-4 space-y-3">
       <div>
         <p className="text-xs font-mono text-gray-400">
           STEP {stepNumber} / {totalSteps}

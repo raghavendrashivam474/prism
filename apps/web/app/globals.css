@@ -11,3 +11,19 @@
   margin-left: 3px;
   border-radius: 2px;
 }
+/* Milestone 2.16: subtle one-shot pulse for concept introduction. */
+@keyframes prism-step-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.35);
+  }
+  60% {
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.prism-step-pulse {
+  animation: prism-step-pulse 1.2s ease-out 1;
+}

@@ -3,25 +3,23 @@
  *
  * Route: /lesson/[id]
  *
- * Composes every Sprint 2 domain package into a full lesson experience.
- * The page itself is thin - all state lives in useLessonWorkspace, all
- * transitions delegate to @prism/lessons pure functions.
+ * Milestone 2.16 refinements:
+ *   - Explicit Finish lesson button on the final step.
+ *   - LessonCompletionPanel above lesson content after Finish is pressed.
+ *   - Subtle one-shot border pulse on LessonStepPanel per step change
+ *     (driven by key={displayedStep.id}).
  *
- * Milestone 2.15 additions:
- *   - Workspace mode aware rendering (active | review).
- *   - Clickable completed progress chips enter review mode.
- *   - Prominent review banner with "Return to current step".
- *   - Monaco editor is read-only in review mode.
- *   - Reset stays visible in review mode but is disabled with an
- *     explanation.
- *   - Show Me on satisfied objectives (delegated to the feedback panel).
+ * IMPORTANT (Rules of Hooks):
+ * All hook calls happen unconditionally at the top of the component,
+ * BEFORE any early return. Early returns for loading and error states
+ * come only after every hook has been invoked. React requires the same
+ * hooks to be called in the same order on every render.
  */
 
 "use client";
 
-import { use } from "react";
+import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useRef } from "react";
 import type * as MonacoType from "monaco-editor";
 import { HttpExecutionClient } from "@/lib/execution/client";
 import { HttpExecutionRunner } from "@/lib/execution/runner";
@@ -30,6 +28,7 @@ import { useLessonWorkspace } from "@/lib/lesson/use-lesson-workspace";
 import { LessonStepPanel } from "@/components/LessonStepPanel";
 import { LessonFeedbackPanel } from "@/components/LessonFeedbackPanel";
 import { LessonProgressPanel } from "@/components/LessonProgressPanel";
+import { LessonCompletionPanel } from "@/components/LessonCompletionPanel";
 import { TimelineControls } from "@/components/TimelineControls";
 import { VariablePanel } from "@/components/VariablePanel";
 import { FailurePanel } from "@/components/FailurePanel";
@@ -57,6 +56,8 @@ export default function LessonPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  // === HOOKS: everything unconditional, before any early return ===
+
   const { id } = use(params);
   const registry = getEvaluatorRegistry();
 
@@ -92,6 +93,19 @@ export default function LessonPage({
     runner: executionRunner,
     registry,
   });
+
+  // Milestone 2.16: the learner must explicitly press Finish on the
+  // terminal step for the completion panel to appear.
+  const [finishAcknowledged, setFinishAcknowledged] = useState(false);
+
+  // If the learner resets the lesson while the completion panel is
+  // showing, drop the acknowledgement so a subsequent completion is
+  // fresh again.
+  useEffect(() => {
+    if (!lessonComplete) {
+      setFinishAcknowledged(false);
+    }
+  }, [lessonComplete]);
 
   const editorRef = useRef<MonacoType.editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<typeof MonacoType | null>(null);
@@ -137,14 +151,34 @@ export default function LessonPage({
     return describer.describe(currentSnapshot);
   }, [currentSnapshot]);
 
-  const hasSnapshots = result.snapshots.length > 0;
-  const isFailure = result.status === "failure";
-
   const nextAvailableStepId: string | null = useMemo(() => {
     if (!session) return null;
     const next = session.stepStates.find((s) => s.status === "available");
     return next?.stepId ?? null;
   }, [session]);
+
+  const feedbackContinueHandler = useMemo(() => {
+    if (mode !== "active") return undefined;
+    if (feedback === null || feedback.tone !== "success") return undefined;
+    if (nextAvailableStepId !== null) {
+      return () => continueToStep(nextAvailableStepId);
+    }
+    if (lessonComplete && !finishAcknowledged) {
+      return () => setFinishAcknowledged(true);
+    }
+    return undefined;
+  }, [
+    mode,
+    feedback,
+    nextAvailableStepId,
+    lessonComplete,
+    finishAcknowledged,
+    continueToStep,
+  ]);
+
+  // === END HOOKS ===
+
+  // Early returns come only AFTER every hook has been declared.
 
   if (lessonError) {
     return (
@@ -173,6 +207,10 @@ export default function LessonPage({
     );
   }
 
+  // Derived plain values (NOT hooks) can go here.
+  const hasSnapshots = result.snapshots.length > 0;
+  const isFailure = result.status === "failure";
+
   const displayedStepNumber =
     session.stepStates.findIndex((s) => s.stepId === displayedStep.id) + 1;
 
@@ -185,6 +223,17 @@ export default function LessonPage({
     mode === "review"
       ? "Return to the active step before resetting the lesson."
       : undefined;
+
+  const feedbackContinueLabel =
+    nextAvailableStepId !== null
+      ? "Continue to next step"
+      : "Finish lesson";
+
+  const feedbackCanContinue =
+    feedbackContinueHandler !== undefined;
+
+  const showCompletionPanel =
+    mode === "active" && lessonComplete && finishAcknowledged;
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
@@ -276,6 +325,10 @@ export default function LessonPage({
           </div>
 
           <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
+            {showCompletionPanel && (
+              <LessonCompletionPanel lesson={lesson} session={session} />
+            )}
+
             {mode === "review" && (
               <div className="rounded-lg border border-green-400 bg-green-50 p-4 space-y-2">
                 <p className="font-semibold text-green-900">
@@ -297,19 +350,11 @@ export default function LessonPage({
             )}
 
             <LessonStepPanel
+              key={displayedStep.id}
               step={displayedStep}
               stepNumber={displayedStepNumber}
               totalSteps={session.stepStates.length}
             />
-
-            {lessonComplete && mode === "active" && (
-              <div className="rounded-lg border border-green-300 bg-green-50 p-4">
-                <p className="font-semibold text-green-800">Lesson complete</p>
-                <p className="text-sm text-green-900 mt-1">
-                  You have satisfied every step in this lesson.
-                </p>
-              </div>
-            )}
 
             {isFailure && result.status === "failure" && (
               <FailurePanel
@@ -348,16 +393,9 @@ export default function LessonPage({
               <LessonFeedbackPanel
                 feedback={feedback}
                 onShowMe={jumpToEvidence}
-                onContinue={
-                  mode === "active" && nextAvailableStepId
-                    ? () => continueToStep(nextAvailableStepId!)
-                    : undefined
-                }
-                canContinue={
-                  mode === "active" &&
-                  feedback.tone === "success" &&
-                  nextAvailableStepId !== null
-                }
+                onContinue={feedbackContinueHandler}
+                canContinue={feedbackCanContinue}
+                continueLabel={feedbackContinueLabel}
               />
             )}
 

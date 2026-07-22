@@ -6,11 +6,9 @@
  * evidenceHint expose a "Show Me" button that focuses the timeline on
  * the proving snapshot via the parent's onShowMe callback.
  *
- * Milestone 2.15 additions:
- *   - "Show Me" button on satisfied objectives that have evidence.
- *     The button does not render for objectives without evidence.
- *   - The existing "jump to evidence (step N)" link remains as a
- *     compact secondary affordance.
+ * The advance button (last row) is labelled by the parent via
+ * continueLabel so the same panel is used for the mid-lesson
+ * "Continue to next step" and the terminal "Finish lesson" actions.
  *
  * This component does NOT know how the timeline works. It just calls
  * onShowMe with a sequence number.
@@ -27,6 +25,7 @@ interface Props {
   onShowMe(sequence: number): void;
   onContinue?: () => void;
   canContinue?: boolean;
+  continueLabel?: string;
 }
 
 const OVERALL_TONE_STYLES: Record<LearnerFeedbackTone, string> = {
@@ -70,6 +69,7 @@ export function LessonFeedbackPanel({
   onShowMe,
   onContinue,
   canContinue,
+  continueLabel = "Continue to next step",
 }: Props) {
   return (
     <div
@@ -133,7 +133,7 @@ export function LessonFeedbackPanel({
           onClick={onContinue}
           className="w-full mt-2 px-3 py-1.5 rounded bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-colors"
         >
-          Continue to next step
+          {continueLabel}
         </button>
       )}
     </div>
