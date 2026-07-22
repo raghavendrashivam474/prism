@@ -906,13 +906,21 @@ PRISM currently uses separate development processes for the API and web applicat
 
 ## Terminal 1 — API
 
-From the repository root:
+From the API app directory:
 
 ```powershell
-python -m uvicorn apps.api.main:app --reload --port 8000
+cd apps/api
+python -m uvicorn main:app --reload --port 8000
 ```
 
 The API runs on port `8000`.
+
+> **Windows note:** launch from `apps/api/` with `main:app`, not from the
+> repository root with `apps.api.main:app`. Some Windows dev setups
+> resolve the Docker sandbox provider inconsistently under the
+> package-style module path, leading to intermittent "Access is denied"
+> errors from Docker Desktop. The directory-scoped invocation is
+> canonical for local dev.
 
 ## Terminal 2 — Web
 
