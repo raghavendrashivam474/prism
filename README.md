@@ -4,6 +4,11 @@
 
 > **Make program execution visible, deterministic, and understandable.**
 
+**Sprint status:** Sprint 2 complete (`v0.3.0`). Sprint 2 delivered the
+lesson experience foundation: lessons, session progression, runtime
+objective evaluation, evidence-linked feedback, review mode, and
+lesson completion. See [`CHANGELOG.md`](./CHANGELOG.md) for details.
+
 PRISM is an interactive programming-learning platform that transforms real program execution into deterministic, language-neutral learning events and projects those events as a synchronised, step-by-step visual execution experience.
 
 Instead of treating code as static syntax or reducing execution to final console output, PRISM exposes how program state changes over time.
