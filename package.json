@@ -10,6 +10,7 @@
     "packages/lessons",
     "packages/objectives",
     "packages/execution-result",
+    "packages/learner",
     "packages/visualizers/variable-state"
   ],
   "scripts": {
